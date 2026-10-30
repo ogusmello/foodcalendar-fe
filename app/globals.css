@@ -143,6 +143,12 @@
     @apply outline-2 outline-offset-4 outline-ring;
   }
 
+  input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none;
+  }
+
   ::selection {
     @apply bg-primary-muted text-primary-muted-foreground;
   }
