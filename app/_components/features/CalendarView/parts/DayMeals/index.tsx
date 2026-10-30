@@ -24,7 +24,7 @@ export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
                       meal={plan.meal}
                       context={{ mealType: plan.mealType, userName: plan.user.name, date, plan }}
                       title={`${plan.meal.name} · ${plan.user.name}`}
-                      className={`flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left ${category.color}`}
+                      className={`flex w-full items-center gap-3 rounded-control px-3 py-2 text-left ${category.color}`}
                     >
                       <MealTypeIcon type={category.type} size={20} aria-hidden="true" className="shrink-0" />
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
