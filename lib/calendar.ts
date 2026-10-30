@@ -13,3 +13,11 @@ export function formatDate(value: string, options: Intl.DateTimeFormatOptions = 
   const date = parseDate(value);
   return date ? new Intl.DateTimeFormat("pt-BR", options).format(date) : value;
 }
+export function todayInSaoPaulo(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
