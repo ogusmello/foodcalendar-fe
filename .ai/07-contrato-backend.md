@@ -91,3 +91,6 @@ O contrato oferece refeições com nome e descrição, sem ingredientes estrutur
 - Falhas em uma das consultas devem ser identificadas como resultado parcial, com possibilidade de nova tentativa.
 - O filtro individual usa a mesma operação com apenas um userId. Período e regras de expansão de recorrência permanecem iguais.
 - O contrato não oferece mutação em lote para o casal. Uma futura ação para ambos exige chamadas separadas e tratamento de sucesso parcial, sem presumir atomicidade.
+
+## TopNav implementada
+O resumo diário usa mealType como eixo e uma linha por pessoa, com barras para as refeições. Não há campo de horário no contrato; não criar horários presumidos. As rotas internas do Next usam API_BASE_URL (endereço base sem /v1) para acesso pelo servidor. Ver 09-topnav-e-busca.md e .env.example.
