@@ -55,3 +55,7 @@ O azul fica restrito ao feedback informativo, sem dominar a identidade.
 
 ## Refinamento de cor
 A pedido do usuário, ampliar a variedade cromática. Verde principal mais vivo (#18794e no tema claro) e apoio laranja (#b5481d). Refeições usam famílias próprias: café em amarelo, almoço em verde, lanche em pêssego, jantar em lavanda e sobremesa em rosa. Manter as superfícies neutras para destacar o conteúdo sem sobrecarregar a interface. Esta revisão substitui os valores anteriores de primary e accent da tabela base; a fonte de verdade permanece app/globals.css.
+
+
+## Ajuste de saturação
+Após revisão do usuário, suavizar a paleta: manter amarelo, verde, pêssego, lavanda e rosa em fundos discretos, com textos de cor moderada. Verde principal #2b6d4f e apoio #a55732 no claro. No escuro, reduzir também a saturação dos fundos e textos. Esses valores substituem a revisão mais vibrante anterior; app/globals.css é a fonte de verdade.

@@ -57,3 +57,7 @@ Trocar o tema atualiza toda a interface. Novas telas reutilizam tokens e escalas
 
 ## Tokens de categorias de refeição
 Implementados meal-breakfast, meal-lunch, meal-snack, meal-dinner e meal-dessert, cada um com seu par *-foreground e valores próprios nos dois temas. Consumir via bg-meal-* e text-meal-*-foreground, com nomes de classes completos. Contraste calculado dos cinco pares: mínimo de 6,25:1 no claro e 7,44:1 no escuro. Não confundir cores de categoria com sucesso, alerta ou erro; ícone e texto continuam identificando cada tipo.
+
+
+## Refinamento dos tokens de refeições
+Valores dessaturados nos dois temas, preservando as cinco famílias. Contraste mínimo dos pares de categoria: 4,81:1 no claro e 6,86:1 no escuro.
