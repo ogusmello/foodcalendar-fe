@@ -46,3 +46,6 @@ Chromium validou seleção simples/múltipla, limpeza, as três visões, preserv
 
 ## Rótulo da visão diária
 O seletor usa Dia, Semana e Mês. Alternar visões preserva a data escolhida; não retorna automaticamente ao dia atual. Entre as setas é exibida a data selecionada no formato DD/MM/AAAA, substituindo o antigo atalho Hoje. Chromium verificou 03/10/2026 e a alternância Semana → Dia preservando data e pessoa.
+
+## Exibição completa no mês
+A visão mensal lista todas as refeições de cada dia, sem limite de três itens e sem contador de refeições ocultas. As células crescem conforme o conteúdo. Os nomes dos cards compactos quebram linha em vez de truncar. Navegação por data e abertura do modal continuam preservadas. Verificação Chromium confirmou os cinco cards do perfil em um dia e ausência do antigo contador.

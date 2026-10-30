@@ -177,6 +177,11 @@ try{
   await page.getByRole("button",{name:"Abrir menu",exact:true}).click();
   await page.getByRole("button",{name:"Fechar menu",exact:true}).click();
   await page.goto(base+"/?view=month&date=2026-10-30&userId=2");
+  const monthly=page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"});
+  const octoberThird=monthly.getByRole("cell").filter({has:page.getByRole("link",{name:/sábado, 3 de outubro/})});
+  await octoberThird.waitFor();
+  assert.equal(await octoberThird.getByRole("button").count(),5,"Month cell shows all five meals for the person");
+  assert.equal(await monthly.getByRole("link",{name:/^\+\d+ refeições$/}).count(),0,"No collapsed meal counter");
   await page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"}).getByRole("link",{name:/sexta-feira, 30 de outubro/}).click();
   await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("date")==="2026-10-30" && url.searchParams.get("userId")==="2");
   await page.locator('[aria-label="Calendário diário"]').waitFor();

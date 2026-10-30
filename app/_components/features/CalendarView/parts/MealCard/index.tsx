@@ -16,7 +16,7 @@ export function MealCard({ plan, date, variant = "default" }: MealCardProps) {
     >
       {!detailed && <MealTypeIcon type={plan.mealType} size={compact ? 12 : 16} />}
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className={compact ? "truncate text-[10px] font-medium leading-3" : "text-xs font-medium leading-4"}>{plan.meal.name}</span>
+        <span className={compact ? "whitespace-normal break-words text-[10px] font-medium leading-3" : "text-xs font-medium leading-4"}>{plan.meal.name}</span>
         {!compact && <span className="text-[10px] leading-3">{plan.user.name}</span>}
         {detailed && <span className="mt-1 text-xs leading-4 text-foreground">{plan.meal.description}</span>}
       </span>
