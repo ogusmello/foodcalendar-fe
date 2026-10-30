@@ -8,7 +8,7 @@
 ## Mini calendário — referência confirmada
 - Faixa horizontal em um único bloco arredondado, conforme a referência de pílulas enviada pelo usuário. Sem tabela ou grade.
 - Pílulas lado a lado com ícone à esquerda, mealType em texto pequeno acima e nome da refeição abaixo. Na visão conjunta, identificar também a pessoa.
-- Rolagem horizontal nativa dentro da faixa, com conteúdo seguinte parcialmente visível e scrollbar oculta. Navegável por teclado; sem cabeçalhos de tabela, linhas de grade ou botões de calendário.
+- Mobile: rolagem horizontal nativa na faixa, sem scrollbar aparente. Desktop (md em diante): viewport com overflow horizontal oculto e botões Anteriores/Próximas, desativados nos limites. O deslocamento respeita movimento reduzido e as dimensões são acompanhadas por ResizeObserver.
 - Não atribuir horários, duração ou escala de horas: o backend oferece BREAKFAST, LUNCH, SNACK, DINNER e DESSERT, sem horário.
 - O dia e a pessoa são lidos da URL; sem filtro individual, mostrar a visão conjunta dos usuários cadastrados no contexto pessoal da aplicação.
 - Cada pessoa é consultada com userId e date completos; falhas parciais são indicadas.

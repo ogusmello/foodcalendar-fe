@@ -1,7 +1,9 @@
 "use client";
+import { useEffect, useId, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 
 import { MealTrigger } from "../../../MealTrigger";
-import { CoffeeIcon, ForkKnifeIcon, CookieIcon, MoonIcon, CakeIcon } from "@phosphor-icons/react";
+import { CoffeeIcon, ForkKnifeIcon, CookieIcon, MoonIcon, CakeIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { formatDate } from "@/lib/calendar";
 
 import type { DayOverviewProps, MealPill, MealSlot } from "./types";
@@ -15,6 +17,38 @@ const slots = [
 ] satisfies MealSlot[];
 
 export function DayOverview({ date, data, userId }: DayOverviewProps) {
+  const viewport = useRef<HTMLDivElement>(null);
+  const content = useRef<HTMLUListElement>(null);
+  const viewportId = useId();
+  const reduceMotion = useReducedMotion();
+  const [bounds, setBounds] = useState({ start: true, end: true });
+
+  useEffect(() => {
+    const element = viewport.current;
+    const list = content.current;
+    if (!element || !list) return;
+    function updateBounds() {
+      if (!element) return;
+      const next = { start: element.scrollLeft <= 1, end: element.scrollLeft + element.clientWidth >= element.scrollWidth - 1 };
+      setBounds(previous => previous.start === next.start && previous.end === next.end ? previous : next);
+    }
+    const observer = new ResizeObserver(updateBounds);
+    observer.observe(element);
+    observer.observe(list);
+    element.addEventListener("scroll", updateBounds, { passive: true });
+    return () => { observer.disconnect(); element.removeEventListener("scroll", updateBounds); };
+  }, []);
+
+  useEffect(() => {
+    viewport.current?.scrollTo({ left: 0, behavior: "instant" });
+  }, [date, userId]);
+
+  function move(direction: number) {
+    const element = viewport.current;
+    if (!element) return;
+    element.scrollBy({ left: direction * Math.max(160, element.clientWidth * 0.8), behavior: reduceMotion ? "instant" : "smooth" });
+  }
+
   const plans = data?.plans.filter((plan) => !userId || String(plan.user.id) === userId) ?? [];
   const items = slots.flatMap<MealPill>((slot) => {
     const matches = plans.filter((plan) => plan.mealType === slot.type);
@@ -24,14 +58,16 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
   });
 
   return (
-    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-2xl rounded-full bg-surface-muted p-1">
+    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto flex w-full min-w-0 max-w-2xl items-center gap-1 rounded-full bg-surface-muted p-1">
+      <button type="button" aria-label="Refeições anteriores" aria-controls={viewportId} disabled={bounds.start} onClick={() => move(-1)} className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-surface text-muted-foreground hover:text-primary focus-visible:-outline-offset-2 disabled:cursor-default disabled:opacity-30 md:flex"><CaretLeftIcon size={15} aria-hidden="true" /></button>
       <div
+        ref={viewport}
+        id={viewportId}
         role="region"
-        aria-label="Refeições do dia, role horizontalmente para explorar"
-        tabIndex={0}
-        className="overflow-x-auto overscroll-x-contain rounded-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        aria-label="Refeições do dia"
+        className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain rounded-full md:overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="flex w-max min-w-full snap-x snap-proximity items-center gap-1.5">
+        <ul ref={content} className="flex w-max min-w-full snap-x snap-proximity items-center gap-1.5">
           {items.map(({ slot, plan }) => {
             const Icon = slot.icon;
             const subtitle = !data ? "Carregando…"
@@ -62,6 +98,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
           })}
         </ul>
       </div>
+      <button type="button" aria-label="Próximas refeições" aria-controls={viewportId} disabled={bounds.end} onClick={() => move(1)} className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-surface text-muted-foreground hover:text-primary focus-visible:-outline-offset-2 disabled:cursor-default disabled:opacity-30 md:flex"><CaretRightIcon size={15} aria-hidden="true" /></button>
       {data?.status === "partial" && <span role="status" className="sr-only">Parte do planejamento está indisponível.</span>}
     </section>
   );
