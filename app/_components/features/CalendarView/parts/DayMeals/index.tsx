@@ -12,7 +12,7 @@ export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
         const meals = plans.filter(plan => plan.mealType === category.type);
         return (
           <section key={category.type}>
-            <h3 className="mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-wide text-muted-foreground">
+            <h3 className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold uppercase leading-5 tracking-wide text-muted-foreground">
               <MealTypeIcon type={category.type} size={14} aria-hidden="true" className="shrink-0" />
               {category.label}
             </h3>
@@ -28,15 +28,15 @@ export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
                     >
                       <MealTypeIcon type={category.type} size={17} aria-hidden="true" className="shrink-0" />
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="text-xs font-medium leading-4">{plan.meal.name}</span>
-                        <span className="text-[10px] leading-3">{plan.user.name}</span>
+                        <span className="text-sm font-medium leading-5">{plan.meal.name}</span>
+                        <span className="text-sm leading-5">{plan.user.name}</span>
                       </span>
                     </MealTrigger>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs leading-4 text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>
+              <p className="text-sm leading-5 text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>
             )}
           </section>
         );

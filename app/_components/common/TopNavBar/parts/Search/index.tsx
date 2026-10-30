@@ -136,7 +136,7 @@ export function Search({ date, userId }: SearchProps) {
           <label htmlFor="global-search-input" className="sr-only">Refeição ou data, por exemplo 02/11/2026</label>
           <input id="global-search-input" ref={input} type="search" value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "Enter") { event.preventDefault(); dialog.current?.querySelector<HTMLElement>("[data-search-result]")?.click(); }
-          }} placeholder="Busque uma refeição, hoje ou uma data…" autoComplete="off" className="min-w-0 flex-1 bg-transparent py-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none" />
+          }} placeholder="Buscar refeições ou datas" autoComplete="off" className="min-w-0 flex-1 bg-transparent py-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none" />
           <button type="button" onClick={close} aria-label="Fechar pesquisa" className="flex size-9 shrink-0 items-center justify-center rounded-control text-muted-foreground hover:bg-surface-muted"><XIcon size={18} aria-hidden="true" /></button>
         </div>
         <div className="max-h-[55dvh] min-h-56 space-y-6 overflow-y-auto p-4 sm:p-5">

@@ -8,6 +8,7 @@ import { formatDate, parseDate, shiftDays, todayInSaoPaulo } from "@/lib/calenda
 import { mealCategories } from "@/lib/meals";
 import type { Meal, MealPlan, User } from "@/lib/api/types";
 import type { WorkflowFormProps } from "./types";
+import { MealPicker } from "./parts/MealPicker";
 import { PlanSummary } from "./parts/PlanSummary";
 
 const dayNames = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
@@ -29,7 +30,6 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
   const [description, setDescription] = useState("");
   const [people, setPeople] = useState<string[]>(plan ? [String(plan.user.id)] : request.userId ? [request.userId] : []);
   const [mealId, setMealId] = useState(String(plan?.meal.id ?? request.meal?.id ?? ""));
-  const [mealQuery, setMealQuery] = useState("");
   const [type, setType] = useState(plan?.mealType ?? request.mealType ?? "LUNCH");
   const [start, setStart] = useState(plan?.startDate ?? request.date ?? todayInSaoPaulo());
   const [end, setEnd] = useState(plan?.endDate ?? request.date ?? todayInSaoPaulo());
@@ -89,7 +89,7 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
     busy(true);
     try {
       const meal = await mutate<Meal>("/meals", "POST", { name: newName.trim(), description: newDescription.trim() });
-      setMeals(current => [...current, meal]); setMealId(String(meal.id)); setMealQuery(""); setInlineMeal(false); onChanged();
+      setMeals(current => [...current, meal]); setMealId(String(meal.id)); setInlineMeal(false); onChanged();
     } catch (error) { showError(error); } finally { busy(false); }
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -146,17 +146,17 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
     {loading && <p role="status" className="text-sm text-muted-foreground">Carregando opções…</p>}
     {loadError && <p role="alert" className="text-sm text-danger">Não foi possível carregar as opções. Feche e abra o formulário para tentar novamente.</p>}
     <fieldset disabled={frozen || loading || loadError || uncertain} className="space-y-4 disabled:opacity-70">
-      {(kind === "user" || kind === "edit-user" || kind === "meal") && label("name", "Nome", <input id={id+"name"} className={inputClass} value={name} onChange={event => setName(event.target.value)} maxLength={255} required autoFocus />)}
-      {kind === "meal" && label("description", "Descrição", <textarea id={id+"description"} className={inputClass} rows={4} value={description} onChange={event => setDescription(event.target.value)} required />)}
+      {(kind === "user" || kind === "edit-user" || kind === "meal") && label("name", "Nome", <input id={id+"name"} className={inputClass} value={name} onChange={event => setName(event.target.value)} placeholder={kind === "meal" ? "Ex.: Pão com ovos mexidos" : "Ex.: Ana"} maxLength={255} required autoFocus />)}
+      {kind === "meal" && label("description", "Descrição", <textarea id={id+"description"} className={inputClass} placeholder="Ex.: Pão integral, ovos mexidos e café." rows={4} value={description} onChange={event => setDescription(event.target.value)} required />)}
       {(isPlan || kind === "clone") && <>
         <fieldset><legend className="mb-2 text-xs font-medium">Para quem?</legend><div className="flex flex-wrap gap-2">
           {kind !== "edit-plan" && <button type="button" onClick={() => setPeople(users.map(user => String(user.id)))} className={secondary}>{users.length > 2 ? "Todos" : "Ambos"}</button>}
           {users.map(user => <label key={user.id} className="flex items-center gap-2 rounded-control border border-border px-3 py-2 text-xs"><input type="checkbox" disabled={kind === "edit-plan"} checked={people.includes(String(user.id))} onChange={event => setPeople(current => event.target.checked ? [...current, String(user.id)] : current.filter(person => person !== String(user.id)))} />{user.name}</label>)}
         </div>{users.length === 0 && <p className="mt-2 text-xs text-muted-foreground">Adicione uma pessoa em Configurações para continuar.</p>}</fieldset>
         {isPlan && <>
-          {label("mealId", "Refeição", <div className="space-y-2"><input aria-label="Filtrar refeições" className={inputClass} value={mealQuery} onChange={event => setMealQuery(event.target.value)} placeholder="Buscar pelo nome…" /><select id={id+"mealId"} className={inputClass} value={mealId} onChange={event => setMealId(event.target.value)} required><option value="">Selecione uma refeição</option>{meals.filter(meal => String(meal.id) === mealId || meal.name.toLocaleLowerCase().includes(mealQuery.toLocaleLowerCase())).map(meal => <option key={meal.id} value={meal.id}>{meal.name}</option>)}</select></div>)}
+          {label("mealId", "Refeição", <MealPicker id={id+"mealId"} meals={meals} value={mealId} onChange={setMealId} />)}
           <button type="button" onClick={() => setInlineMeal(!inlineMeal)} className="rounded text-xs font-medium text-primary">{inlineMeal ? "Voltar à seleção" : "+ Criar nova refeição"}</button>
-          {inlineMeal && <section className="space-y-3 rounded-card bg-surface-muted p-4"><p className="text-xs font-medium">Nova refeição</p><input aria-label="Nome da nova refeição" className={inputClass} value={newName} onChange={event => setNewName(event.target.value)} placeholder="Nome" maxLength={255} /><textarea aria-label="Descrição da nova refeição" className={inputClass} value={newDescription} onChange={event => setNewDescription(event.target.value)} placeholder="Descrição" /><button type="button" onClick={createInlineMeal} className={secondary}>Salvar e selecionar</button><p className="text-[10px] text-muted-foreground">A refeição permanece no catálogo mesmo se o planejamento for cancelado.</p></section>}
+          {inlineMeal && <section className="space-y-3 rounded-card bg-surface-muted p-4"><p className="text-xs font-medium">Nova refeição</p><input aria-label="Nome da nova refeição" className={inputClass} value={newName} onChange={event => setNewName(event.target.value)} placeholder="Ex.: Pão com ovos mexidos" maxLength={255} /><textarea aria-label="Descrição da nova refeição" className={inputClass} value={newDescription} onChange={event => setNewDescription(event.target.value)} placeholder="Ex.: Pão integral, ovos mexidos e café." /><button type="button" onClick={createInlineMeal} className={secondary}>Salvar e selecionar</button><p className="text-[10px] text-muted-foreground">A refeição permanece no catálogo mesmo se o planejamento for cancelado.</p></section>}
           {label("mealType", "Tipo de refeição", <select id={id+"mealType"} className={inputClass} value={type} onChange={event => setType(event.target.value as typeof type)}>{mealCategories.map(category => <option key={category.type} value={category.type}>{category.label}</option>)}</select>)}
           {kind === "edit-plan" && <p className="text-xs text-warning">A edição afeta toda a recorrência deste planejamento. A pessoa não pode ser alterada.</p>}
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={repeat} onChange={event => setRepeat(event.target.checked)} />Repetir em um período</label>

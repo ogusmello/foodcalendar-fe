@@ -69,12 +69,12 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
       <section aria-labelledby="month-heading" className="min-w-0 overflow-hidden rounded-card border border-border bg-surface shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
           <h2 id="month-heading" className="text-lg font-semibold capitalize">{title}</h2>
-          <span className="text-xs text-muted-foreground">{view === "day" ? `${selectedPlans.length} refeições` : "Selecione um dia para ver as refeições"}</span>
+          <span className="text-sm text-muted-foreground">{view === "day" ? `${selectedPlans.length} refeições` : "Selecione um dia para ver as refeições"}</span>
         </div>
         {view === "month" ? <div role="region" aria-label="Calendário mensal, rolável em telas pequenas" tabIndex={0} className="overflow-x-auto">
           <table className="w-full min-w-[42rem] table-fixed border-separate border-spacing-0">
             <caption className="sr-only">{formatDate(date, { month: "long", year: "numeric" })}, refeições planejadas por dia</caption>
-            <thead><tr>{headings.map(day => <th key={day} scope="col" className="border-r border-b border-border bg-background px-2 py-3 text-left text-xs font-medium text-muted-foreground last:border-r-0">{day}</th>)}</tr></thead>
+            <thead><tr>{headings.map(day => <th key={day} scope="col" className="border-r border-b border-border bg-background px-2 py-3 text-left text-sm font-medium text-muted-foreground last:border-r-0">{day}</th>)}</tr></thead>
             <tbody>{weeks.map(week => <tr key={week[0]}>{week.map(day => <DayCell userId={person} key={day} date={day} today={today} selected={day === date} inMonth={day.slice(0, 7) === date.slice(0, 7)} plans={occurrences(day)} href={href(day, person, "day")} incomplete={incomplete} />)}</tr>)}</tbody>
           </table>
         </div>
@@ -82,9 +82,9 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
         <MealFilters selected={filterTypes} />
       </section>
       {view === "month" && <aside aria-labelledby="selected-day-heading" className="rounded-card border border-border bg-surface p-5 shadow-card">
-        <p className="text-xs capitalize text-muted-foreground">{formatDate(date, { weekday: "long" })}</p>
+        <p className="text-sm capitalize text-muted-foreground">{formatDate(date, { weekday: "long" })}</p>
         <h2 id="selected-day-heading" className="mt-1 text-lg font-semibold">{formatDate(date, { day: "numeric", month: "long" })}</h2>
-        <p className="mt-1 text-xs text-muted-foreground">{selectedPlans.length} refeições{incomplete ? " · dados parciais" : ""}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{selectedPlans.length} refeições{incomplete ? " · dados parciais" : ""}</p>
         <DayMeals types={filterTypes} plans={selectedPlans} date={date} incomplete={incomplete} />
         <Link href={href(date, person, "week")} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}

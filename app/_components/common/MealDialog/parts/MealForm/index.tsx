@@ -51,12 +51,12 @@ export function MealForm({ meal, onSaved, onCancel, onBusyChange }: MealFormProp
   return <form onSubmit={submit} className="space-y-4">
     <div>
       <label htmlFor={id + "-name"} className="mb-2 block text-xs font-medium">Nome da refeição</label>
-      <input id={id + "-name"} autoFocus value={name} onChange={event => setName(event.target.value)} maxLength={255} disabled={pending} aria-invalid={!!errors.name} aria-describedby={errors.name ? id + "-name-error" : undefined} className="w-full rounded-control border border-border bg-surface px-3 py-2.5 text-sm disabled:opacity-60" />
+      <input id={id + "-name"} autoFocus placeholder="Ex.: Pão com ovos mexidos" value={name} onChange={event => setName(event.target.value)} maxLength={255} disabled={pending} aria-invalid={!!errors.name} aria-describedby={errors.name ? id + "-name-error" : undefined} className="w-full rounded-control border border-border bg-surface px-3 py-2.5 text-sm disabled:opacity-60" />
       {errors.name && <p id={id + "-name-error"} className="mt-1 text-xs text-danger">{errors.name}</p>}
     </div>
     <div>
       <label htmlFor={id + "-description"} className="mb-2 block text-xs font-medium">Descrição</label>
-      <textarea id={id + "-description"} value={description} onChange={event => setDescription(event.target.value)} rows={4} disabled={pending} aria-invalid={!!errors.description} aria-describedby={errors.description ? id + "-description-error" : undefined} className="w-full resize-y rounded-control border border-border bg-surface px-3 py-2.5 text-sm disabled:opacity-60" />
+      <textarea id={id + "-description"} placeholder="Ex.: Pão integral, ovos mexidos e café." value={description} onChange={event => setDescription(event.target.value)} rows={4} disabled={pending} aria-invalid={!!errors.description} aria-describedby={errors.description ? id + "-description-error" : undefined} className="w-full resize-y rounded-control border border-border bg-surface px-3 py-2.5 text-sm disabled:opacity-60" />
       {errors.description && <p id={id + "-description-error"} className="mt-1 text-xs text-danger">{errors.description}</p>}
     </div>
     <p className="text-xs leading-5 text-muted-foreground">A alteração vale para todos os planejamentos que usam esta refeição.</p>

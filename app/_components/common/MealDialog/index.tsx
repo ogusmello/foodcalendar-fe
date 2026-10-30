@@ -85,8 +85,11 @@ export function MealDialogProvider({ children }: MealDialogProps) {
         }} /> : <>
           {saved && <p role="status" className="mb-4 text-xs text-success">Refeição atualizada.</p>}
           <div className="mb-4 flex flex-wrap gap-2">
-            <button type="button" onClick={() => { close(); workflow.open({ kind: "plan", meal: selection.meal, date: selection.context?.date, mealType: selection.context?.mealType, userId: selection.context?.plan ? String(selection.context.plan.user.id) : undefined }); }} className="rounded-control border border-border px-3 py-2 text-xs">Planejar esta refeição</button>
-            {selection.context?.plan && <><button type="button" onClick={() => { close(); workflow.open({ kind: "edit-plan", plan: selection.context!.plan }); }} className="rounded-control border border-border px-3 py-2 text-xs">Editar planejamento</button><button type="button" onClick={() => { close(); workflow.open({ kind: "delete-plan", plan: selection.context!.plan }); }} className="rounded-control px-3 py-2 text-xs text-danger">Excluir planejamento</button></>}
+            {!selection.context?.plan && <button type="button" onClick={() => { close(); workflow.open({ kind: "plan", meal: selection.meal, date: selection.context?.date, mealType: selection.context?.mealType }); }} className="rounded-control border border-border px-3 py-2 text-xs">Planejar esta refeição</button>}
+            {selection.context?.plan && <button type="button" onClick={() => { close(); workflow.open({ kind: "edit-plan", plan: selection.context!.plan }); }} className="rounded-control border border-border px-3 py-2 text-xs">Editar planejamento</button>}
+          </div>
+          <div className="mb-4 flex flex-wrap gap-2 border-t border-border pt-3">
+            {selection.context?.plan && <button type="button" onClick={() => { close(); workflow.open({ kind: "delete-plan", plan: selection.context!.plan }); }} className="rounded-control px-3 py-2 text-xs text-danger">Excluir planejamento</button>}
             <button type="button" onClick={() => { close(); workflow.open({ kind: "delete-meal", meal: selection.meal }); }} className="rounded-control px-3 py-2 text-xs text-danger">Excluir refeição</button>
           </div>
           <div className="flex justify-end gap-2">
