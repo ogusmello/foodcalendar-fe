@@ -1,6 +1,9 @@
 import { externalApi } from "./external-api.mjs";
 import assert from "node:assert/strict";
 import http from "node:http";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 
@@ -19,6 +22,7 @@ async function api(base, endpoint, method="GET", body, status=200) {
   const text=await response.text(); let data; try{data=text?JSON.parse(text):undefined;}catch{throw new Error(endpoint+" returned non-JSON: "+text.slice(0,200));}
   assert.equal(response.status,status,endpoint+": "+text); return data;
 }
+const demoDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "yummy-demo-test-"));
 let app, backend;
 try {
   backend = await externalApi();
@@ -44,14 +48,26 @@ try {
   await backend.close(); backend = null;
   await api(app.base, "/users", "GET", undefined, 503);
   await app.stop(); app = null;
-  for (const value of ["", "not-a-url", "ftp://example.com"]) {
+  for (const value of ["", "   "]) {
+    app = await application({ API_BASE_URL: value, MOCK_DATA_PATH: path.join(demoDirectory, "data.json") });
+    assert.equal((await api(app.base, "/health")).mode, "mock");
+    assert.equal((await api(app.base, "/users")).length, 2);
+    assert.equal((await api(app.base, "/meals")).length >= 20, true);
+    const created = await api(app.base, "/meals", "POST", { name: "Demo creation", description: "Demo description" }, 201);
+    assert.ok((await api(app.base, "/meals")).some(meal => meal.id === created.id));
+    const html = await (await fetch(app.base + "/")).text();
+    assert.ok(html.includes("Modo demonstração"));
+    await app.stop(); app = null;
+  }
+  for (const value of ["not-a-url", "ftp://example.com"]) {
     app = await application({ API_BASE_URL: value });
     const result = await api(app.base, "/users", "GET", undefined, 503);
     assert.match(result.message, /API_BASE_URL/);
     await app.stop(); app = null;
   }
-  console.log("PASS: external API reads, writes, validation, empty responses, errors, unavailable API and missing/invalid configuration.");
+  console.log("PASS: external API reads, writes, validation, empty responses, errors, unavailable API without fallback, automatic production demo mode and invalid configuration.");
 } finally {
   if (app) await app.stop();
   if (backend) await backend.close();
+  fs.rmSync(demoDirectory, { recursive: true, force: true });
 }

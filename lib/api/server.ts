@@ -1,6 +1,7 @@
 import "server-only";
 import { connection } from "next/server";
 import { ApiMutationError } from "./errors";
+import { mockEnabled, getMockResponse, mutateMock } from "./mocks";
 export { ApiMutationError } from "./errors";
 
 export async function getApi<T>(path: string, signal?: AbortSignal): Promise<T> {
@@ -12,6 +13,7 @@ export async function patchApi<T>(path: string, body: Record<string, unknown>, s
 export async function requestApi<T>(path: string, method: string, body?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
   await connection();
   signal?.throwIfAborted();
+  if (mockEnabled()) return (method === "GET" ? getMockResponse(path) : mutateMock(path, method, body ?? {})) as T;
   const configured = process.env.API_BASE_URL?.trim();
   let base: URL;
   try {
