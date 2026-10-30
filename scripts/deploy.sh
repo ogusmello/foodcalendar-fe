@@ -76,8 +76,13 @@ ln -sfn "$target" "$root/current"
 image="$(compose "$target" config --images)"
 printf '%s %s %s\n' "$(date -u +%FT%TZ)" "$action" "$image" >> "$root/history.log"
 echo "Frontend healthy: $image"
-# Backend outage is reported separately: reverting the frontend would not fix it.
+# Missing configuration intentionally selects demo mode.
 if compose "$target" exec -T web node -e '
+  fetch("http://127.0.0.1:3000/api/health")
+    .then(r => r.json()).then(data => process.exit(data.mode === "mock" ? 0 : 1)).catch(() => process.exit(1));
+'; then
+  echo "Demo mode active: API_BASE_URL is not configured."
+elif compose "$target" exec -T web node -e '
   fetch("http://127.0.0.1:3000/api/users", { signal: AbortSignal.timeout(15000) })
     .then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1));
 '; then

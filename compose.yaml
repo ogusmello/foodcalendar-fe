@@ -12,7 +12,7 @@ services:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: "3000"
-      API_BASE_URL: "${API_BASE_URL:?Set API_BASE_URL in .env to the external API URL without /v1}"
+      API_BASE_URL: "${API_BASE_URL:-}"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s

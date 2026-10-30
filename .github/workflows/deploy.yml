@@ -117,7 +117,7 @@ jobs:
           RELEASE_SHA: ${{ inputs.commit }}
         run: |
           echo "Operation: $OPERATION; result: $RESULT; commit: $RELEASE_SHA" >> "$GITHUB_STEP_SUMMARY"
-          grep -E "^(Previous image:|Frontend healthy:)" "$RUNNER_TEMP/deploy-result.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          grep -E "^(Previous image:|Frontend healthy:|Demo mode active:)" "$RUNNER_TEMP/deploy-result.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
           if grep -q '^WARNING:' "$RUNNER_TEMP/deploy-result.txt" 2>/dev/null; then
             echo "Warning: frontend healthy, backend read check failed. No automatic rollback." >> "$GITHUB_STEP_SUMMARY"
           fi

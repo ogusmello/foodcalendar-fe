@@ -26,8 +26,18 @@ try{
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   assert.equal(status, 503);
+  env.API_BASE_URL = "";
+  compose(["up", "-d", "--pull", "never", "--force-recreate", "--wait", "--wait-timeout", "60"]);
+  let demo;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try { demo = await (await fetch(base + "/api/health", { headers: { Connection: "close" } })).json(); break; } catch {}
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  assert.equal(demo.mode, "mock");
+  assert.equal((await (await fetch(base + "/api/users")).json()).length, 2);
+  assert.ok((await (await fetch(base + "/")).text()).includes("Modo demonstração"));
   const logs=compose(["logs","--no-color","web"],true);assert.ok(logs.includes("Ready"));
-  console.log("PASS: Docker image, Compose, health, uid 1001, excluded private env, assets, logs and API-only behavior after recreation.");
+  console.log("PASS: Docker image, Compose, health, uid 1001, excluded private env, assets, logs and API errors without fallback and automatic demo mode without API configuration.");
 }finally{
   compose(["down","--volumes","--remove-orphans"]);
   try{execFileSync("docker",["image","rm","foodist-fe:"+tag],{stdio:"ignore"});}catch{}
