@@ -49,7 +49,7 @@ export function Navigation() {
       <div className="min-w-0 flex-1 xl:max-w-72">
         <Search date={date} userId={userId} />
       </div>
-      <div className="order-last w-full min-w-0 xl:order-none xl:w-auto xl:flex-1">
+      <div className="order-last flex w-full min-w-0 items-center justify-center xl:order-none xl:w-auto xl:flex-1 xl:px-4">
         <DayOverview date={date} data={data} userId={userId} />
       </div>
       <div className="flex shrink-0 items-center gap-2">

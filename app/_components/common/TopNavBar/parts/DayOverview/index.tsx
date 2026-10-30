@@ -24,14 +24,14 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
   });
 
   return (
-    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="min-w-0 rounded-full bg-primary-muted/50 p-1.5">
+    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-lg rounded-full bg-primary-muted/50 p-1">
       <div
         role="region"
         aria-label="Refeições do dia, role horizontalmente para explorar"
         tabIndex={0}
         className="overflow-x-auto overscroll-x-contain rounded-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="flex w-max min-w-full snap-x snap-proximity items-center gap-2">
+        <ul className="flex w-max min-w-full snap-x snap-proximity items-center gap-1.5">
           {items.map(({ slot, plan }) => {
             const Icon = slot.icon;
             const params = new URLSearchParams({ date, mealType: slot.type });
@@ -50,15 +50,15 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
                 <Link
                   href={`/?${params}`}
                   title={`${slot.label}: ${subtitle}${plan ? ` · ${plan.user.name}` : ""}`}
-                  className="m-0.5 flex min-h-12 max-w-80 items-center gap-3 rounded-full border border-primary/15 bg-primary-muted px-5 py-2 text-primary-muted-foreground hover:border-primary/40 hover:bg-surface focus-visible:-outline-offset-2"
+                  className="m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-primary/15 bg-primary-muted px-3 py-1 text-primary-muted-foreground hover:border-primary/40 hover:bg-surface focus-visible:-outline-offset-2"
                 >
-                  <Icon size={24} aria-hidden="true" className="shrink-0" />
+                  <Icon size={18} aria-hidden="true" className="shrink-0" />
                   <span className="min-w-0">
-                    <span className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide">
+                    <span className="flex items-center gap-2 text-[9px] leading-3 font-semibold uppercase tracking-wide">
                       {slot.label}
                       {!userId && plan && <span className="max-w-20 truncate font-normal normal-case tracking-normal">{plan.user.name}</span>}
                     </span>
-                    <span className="block truncate text-sm font-medium text-foreground">{subtitle}</span>
+                    <span className="block truncate text-xs leading-4 font-medium text-foreground">{subtitle}</span>
                   </span>
                 </Link>
               </li>
