@@ -13,8 +13,8 @@ export function Schedule({ types, days, events, links, today, userId, selectedDa
     return <div aria-label="Calendário diário" className="grid gap-bento p-4 sm:grid-cols-2 xl:grid-cols-3">
       {categories.map(category => {
         const plans = meals.filter(plan => plan.mealType === category.type);
-        return <section key={category.type} className={`rounded-card p-4 ${category.color}`}>
-          <h3 className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-wide"><MealTypeIcon type={category.type} size={14} />{category.label}</h3>
+        return <section key={category.type} className="rounded-card border border-border bg-surface-muted p-4 text-foreground">
+          <h3 className={`mb-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase leading-4 tracking-wide ${category.color}`}><MealTypeIcon type={category.type} size={14} />{category.label}</h3>
           {plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealCard plan={plan} date={days[0]} variant="detailed" /></li>)}</ul> : <div className="space-y-2"><p className="text-xs">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p><WorkflowTrigger request={{ kind: "plan", date: days[0], mealType: category.type, userId: userId ?? undefined }} className="rounded text-xs underline">+ Adicionar</WorkflowTrigger></div>}
         </section>;
       })}
