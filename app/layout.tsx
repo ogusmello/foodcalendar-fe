@@ -12,7 +12,7 @@ const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
 const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "À Mesa | Planejamento alimentar",
+  title: "Yummy | Planejamento alimentar",
   description: "Planejamento alimentar para a rotina de vocês.",
 };
 

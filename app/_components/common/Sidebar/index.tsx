@@ -30,9 +30,9 @@ export function Sidebar() {
   return (
     <motion.aside layout initial={false} className={`flex shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
       <header className={`flex min-h-topbar items-center gap-2 px-4 ${collapsed ? "md:flex-col md:justify-center md:gap-3 md:py-4" : "justify-between"}`}>
-        <Link href="/" aria-label="À Mesa — Calendário" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-control">
+        <Link href="/" aria-label="Yummy — Calendário" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-control">
           <BrandMark className="h-6 w-6 shrink-0 text-foreground" />
-          <span className={`font-brand text-lg font-semibold ${collapsed ? "md:hidden" : ""}`}>À Mesa</span>
+          <span className={`font-brand text-lg font-semibold ${collapsed ? "md:hidden" : ""}`}>Yummy</span>
         </Link>
         <button
           type="button"

@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { People } from "../_components/features/People";
 import { ThemeSwitcher } from "../_components/common/ThemeSwitcher";
 
-export const metadata: Metadata = { title: "Configurações | À Mesa" };
+export const metadata: Metadata = { title: "Configurações | Yummy" };
 
 export default function SettingsPage() {
   return (

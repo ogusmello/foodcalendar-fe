@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { MealResults } from "../_components/features/MealResults";
 import type { MealResultsProps } from "../_components/features/MealResults/types";
 
-export const metadata: Metadata = { title: "Refeições | À Mesa" };
+export const metadata: Metadata = { title: "Refeições | Yummy" };
 
 export default function MealsPage({ searchParams }: MealResultsProps) {
   return (
