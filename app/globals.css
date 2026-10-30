@@ -160,6 +160,25 @@
     @apply bg-background font-sans text-foreground;
   }
 
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="link"]:not([aria-disabled="true"]),
+  label[for],
+  label:has(input:enabled, select:enabled, textarea:enabled),
+  input:is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="date"], [type="time"], [type="datetime-local"]):not(:disabled),
+  ::file-selector-button {
+    @apply cursor-pointer;
+  }
+
+  :disabled,
+  [aria-disabled="true"],
+  label:has(:disabled) {
+    @apply cursor-default;
+  }
+
   :focus-visible:not(input):not(textarea):not(select),
   input[type="checkbox"]:focus-visible,
   input[type="radio"]:focus-visible {
