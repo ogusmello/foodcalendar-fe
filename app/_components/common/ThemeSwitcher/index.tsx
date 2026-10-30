@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { ThemePreference } from "./types";
+import { DesktopIcon, MoonIcon, SunIcon } from "@phosphor-icons/react";
+import type { ThemePreference, ThemeSwitcherProps } from "./types";
 
 const storageKey = "foodist-theme";
 const changeEvent = "foodist-theme-change";
@@ -46,7 +47,7 @@ function getServerPreference(): ThemePreference {
   return "system";
 }
 
-export function ThemeSwitcher() {
+export function ThemeSwitcher({ variant = "select" }: ThemeSwitcherProps) {
   const preference = useSyncExternalStore(subscribe, getPreference, getServerPreference);
 
   function changeTheme(value: string) {
@@ -58,6 +59,17 @@ export function ThemeSwitcher() {
       // The theme remains usable when persistence is unavailable.
     }
     window.dispatchEvent(new Event(changeEvent));
+  }
+
+  if (variant === "icon") {
+    const labels = { system: "Sistema", light: "Claro", dark: "Escuro" };
+    const next = preference === "system" ? "light" : preference === "light" ? "dark" : "system";
+    const Icon = preference === "system" ? DesktopIcon : preference === "light" ? SunIcon : MoonIcon;
+    return (
+      <button type="button" onClick={() => changeTheme(next)} aria-label={`Tema: ${labels[preference]}. Alterar para ${labels[next]}.`} title={`Tema: ${labels[preference]} · Alterar para ${labels[next]}`} className="flex size-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground">
+        <Icon size={20} aria-hidden="true" />
+      </button>
+    );
   }
 
   return (

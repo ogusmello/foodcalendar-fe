@@ -1,12 +1,10 @@
-import { ThemeSwitcher } from "../ThemeSwitcher";
+import { Suspense } from "react";
+import { Navigation } from "./parts/Navigation";
 
 export function TopNavBar() {
   return (
-    <header className="flex min-h-topbar items-center justify-between gap-4 border-b border-border bg-surface px-4 sm:px-6">
-      
-      <span className="text-sm text-muted-foreground">Seu planejamento alimentar</span>
-      <ThemeSwitcher />
-    </header>
+    <Suspense fallback={<header aria-label="Carregando navegação" className="min-h-topbar border-b border-border bg-surface" />}>
+      <Navigation />
+    </Suspense>
   );
 }
-
