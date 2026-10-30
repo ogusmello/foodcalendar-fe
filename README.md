@@ -85,3 +85,82 @@ pnpm test:docker constrói uma imagem isolada e verifica saúde, usuário, arqui
 ## Organização
 
 Componentes em pastas com index.tsx, types.tsx e parts/ para partes exclusivas. Tailwind e tokens em app/globals.css. Camada de dados em lib/api; calendário em app/_components/features/CalendarView.
+
+## Deploy pelo GitHub Actions
+
+O workflow **CI** verifica PRs e pushes na main. Após os testes, um push na main publica a imagem em ghcr.io/ogusmello/foodcalendar-fe com a tag do SHA completo do commit. Actions são fixadas por SHA; apenas o job de publicação recebe permissão de escrita no registry.
+
+O workflow **Deploy** é manual e aceita somente commits da main com CI/publicação concluídos com sucesso. A referência é resolvida para um digest antes da implantação. Na VPS, compose.production.yaml baixa a imagem pronta, sem build e sem checkout do projeto.
+
+### GitHub Secrets
+
+Cadastre em Settings → Secrets and variables → Actions → Repository secrets:
+
+| Secret | Valor |
+| --- | --- |
+| VPS_HOST | Hostname ou IPv4 da VPS |
+| VPS_PORT | Porta SSH, por exemplo 22 |
+| VPS_USER | Usuário SSH com acesso ao Docker e ao diretório de deploy |
+| VPS_DEPLOY_PATH | Caminho absoluto, por exemplo /opt/yummy; sem espaços ou .. |
+| VPS_ARCH | amd64 ou arm64; utilizado pelo job de publicação |
+| APP_PORT | Porta pública do frontend, por exemplo 3000 |
+| API_BASE_URL | URL HTTP/HTTPS do backend acessível pelo container, sem /v1 |
+| VPS_SSH_PRIVATE_KEY | Chave privada do usuário de deploy |
+| VPS_KNOWN_HOSTS | Registro known_hosts da VPS, com fingerprint conferida por canal confiável |
+| GHCR_READ_USER | Usuário para leitura de imagem privada no GHCR |
+| GHCR_READ_TOKEN | Token com acesso de leitura ao pacote privado |
+
+Os dois Secrets GHCR_READ_* podem ser omitidos somente se a imagem for pública. O GITHUB_TOKEN do workflow é fornecido automaticamente pelo GitHub para publicar e inspecionar a imagem; não precisa ser cadastrado.
+
+Use Secrets do **repositório**, inclusive VPS_ARCH, pois a publicação não usa o environment production. O deploy usa o environment production, no qual você pode configurar proteções adicionais. Nenhuma credencial deve ser enviada ao Git.
+
+API_BASE_URL deve ser uma URL simples, sem credenciais embutidas, query ou fragmento. Todos os dados de conexão e ambiente são configurados pelos Secrets. O .env da VPS é gerado pelo workflow com permissões restritas e enviado pela conexão SSH; não é commitado nem incluído na imagem. Alterações nos Secrets passam a valer no próximo deploy.
+
+Para porta SSH diferente de 22, o known_hosts deve identificar [host]:porta. Não desative a validação da chave SSH.
+
+### Preparar a VPS uma vez
+
+Instale Docker Engine, Compose v2, Bash, tar e flock (util-linux). Garanta espaço para pelo menos a imagem atual e a anterior. O usuário de deploy deve conseguir executar Docker sem interação e criar/escrever no diretório escolhido. Prepare esse diretório antes do primeiro deploy, atribuindo as permissões adequadas ao usuário.
+
+A VPS precisa acessar GHCR e o backend externo. O container precisa alcançar API_BASE_URL. Não há instalação automática de Docker, criação de usuário ou alteração do firewall neste workflow. Sem Nginx nesta etapa; porta pública, domínio e HTTPS dependem da infraestrutura escolhida.
+
+### Primeiro deploy e atualizações
+
+1. Configure os Secrets e a VPS.
+2. Envie os workflows à main e aguarde o workflow CI terminar com sucesso, incluindo publicação.
+3. Em Actions → Deploy → Run workflow, selecione a branch main, action=deploy e informe o SHA completo do commit aprovado.
+4. Confira o resultado e os avisos no resumo do workflow.
+
+O deploy baixa a imagem antes de alterar o serviço e aguarda saúde do frontend. Em falha de inicialização ou da verificação HTTP, tenta restaurar a imagem e o .env anteriores. No primeiro deploy não há versão anterior; uma falha interrompe o serviço novo e exige correção.
+
+A consulta ao backend é verificada separadamente. Backend indisponível gera aviso explícito e não dispara rollback automático do frontend. A validação não cria nem exclui dados de produção.
+
+A troca usa uma instância e pode causar breve indisponibilidade. Não há garantia de zero downtime.
+
+### Rollback e operação
+
+Execute Actions → Deploy → Run workflow com action=rollback; o campo commit é ignorado. A operação usa a versão anterior registrada na VPS, incluindo seu .env, e depende de a imagem ainda estar no cache Docker. Não altera dados do backend.
+
+Estrutura do diretório de deploy:
+- releases/<run-id>-<attempt>: Compose, script e .env de cada implantação.
+- current e previous: referências para as versões atual e anterior.
+- history.log: registro de versões e operações.
+- .deploy.lock: bloqueio para impedir implantações simultâneas.
+
+Para consultar o serviço diretamente na VPS, entre em <diretorio>/current e execute:
+
+```sh
+docker compose --project-name yummy --env-file .env -f compose.production.yaml ps
+docker compose --project-name yummy --env-file .env -f compose.production.yaml logs --tail 100 web
+```
+
+Não use prune amplo: mantenha a imagem atual e anterior no host e suas tags por SHA no GHCR. O pipeline não exclui imagens do registry; a política inicial é retenção sem limpeza automática. Releases contêm configuração privada: mantenha permissões restritas e backups seguros. Rotacione credenciais comprometidas e atualize os Secrets.
+
+### Validação local do deploy
+
+```sh
+pnpm test:deploy
+pnpm test:docker
+```
+
+O primeiro testa a orquestração com Docker substituído por um comando isolado: falha de download, falha de inicialização, restauração automática, rollback manual, aviso de backend e validação do ambiente. O segundo constrói a imagem e usa o Compose de produção com Docker real. Não substituem a primeira execução no GitHub/VPS, que depende dos Secrets e acessos do seu ambiente.
