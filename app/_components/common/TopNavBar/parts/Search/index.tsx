@@ -105,10 +105,8 @@ export function Search({ date, userId }: SearchProps) {
 
   return (
     <>
-      <button ref={trigger} type="button" onClick={show} aria-haspopup="dialog" aria-expanded={open} aria-controls="global-search" className="flex min-h-10 w-full items-center gap-2 rounded-control border border-border bg-background px-3 text-left text-sm text-muted-foreground hover:border-primary">
-        <MagnifyingGlassIcon size={18} aria-hidden="true" />
-        <span className="flex-1 truncate">Buscar refeições e datas</span>
-        <kbd className="hidden rounded border border-border px-1.5 py-0.5 text-[10px] sm:block">⌘ / Ctrl K</kbd>
+      <button ref={trigger} type="button" onClick={show} aria-label="Buscar refeições e datas" title="Buscar refeições e datas" aria-keyshortcuts="Control+K Meta+K" aria-haspopup="dialog" aria-expanded={open} aria-controls="global-search" className="flex size-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground">
+        <MagnifyingGlassIcon size={20} aria-hidden="true" />
       </button>
       <motion.dialog initial={false} animate={{ opacity: open ? 1 : 0, y: open ? 0 : 6 }}
         id="global-search"

@@ -47,3 +47,6 @@ Framer Motion permanece na penúltima etapa e Docker/Compose na última.
 - Respostas e cancelamento consideram texto, data e pessoa para não exibir resultados de um contexto anterior.
 - /api/search sem texto exige date e aceita userId; com texto usa a pesquisa global por nome. A consulta diária é compartilhada com a TopNav em lib/api/navigation.ts.
 - Validação: lint, tipos, build e HTTP de sugestões diárias, filtro individual, pesquisa de refeição não planejada no dia, fim de semana, dia vazio e parâmetros inválidos aprovados.
+
+## Composição da TopNav
+Busca em botão circular de ícone, no mesmo tamanho e estilo do botão de tema, sem texto ou atalho visível. Ctrl/Cmd+K permanece funcional e descrito por aria-keyshortcuts. No desktop, a faixa de refeições ocupa todo o espaço central, sem largura máxima, com gap horizontal de 2rem entre busca, faixa e grupo de tema/perfil. No mobile, a faixa permanece em segunda linha para preservar a largura útil.

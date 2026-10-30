@@ -58,7 +58,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
   });
 
   return (
-    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto flex w-full min-w-0 max-w-2xl items-center gap-1 rounded-full bg-surface-muted p-1">
+    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="flex w-full min-w-0 items-center gap-1 rounded-full bg-surface-muted p-1">
       <button type="button" aria-label="Refeições anteriores" aria-controls={viewportId} disabled={bounds.start} onClick={() => move(-1)} className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-surface text-muted-foreground hover:text-primary focus-visible:-outline-offset-2 disabled:cursor-default disabled:opacity-30 md:flex"><CaretLeftIcon size={15} aria-hidden="true" /></button>
       <div
         ref={viewport}

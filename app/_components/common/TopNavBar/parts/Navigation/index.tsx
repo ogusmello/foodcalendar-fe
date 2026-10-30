@@ -52,14 +52,14 @@ export function Navigation() {
   const data = result?.key === key ? result.data : null;
 
   return (
-    <header className="flex flex-wrap items-center gap-3 border-b border-border bg-surface px-4 py-3 sm:px-6 xl:flex-nowrap">
-      <div className="min-w-0 flex-1 xl:max-w-72">
+    <header className="grid grid-cols-[auto_1fr] items-center gap-x-8 gap-y-3 border-b border-border bg-surface px-4 py-3 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto]">
+      <div className="shrink-0">
         <Search date={date} userId={userId} />
       </div>
-      <div className="order-last flex w-full min-w-0 items-center justify-center xl:order-none xl:w-auto xl:flex-1 xl:px-4">
+      <div className="order-last col-span-2 min-w-0 md:order-none md:col-span-1">
         <DayOverview date={date} data={data} userId={userId} />
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center justify-self-end gap-2">
         <ThemeSwitcher variant="icon" />
         <ProfileMenu users={data?.users ?? []} selectedId={userId} />
       </div>
