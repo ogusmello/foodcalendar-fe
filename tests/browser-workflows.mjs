@@ -137,7 +137,7 @@ try{
   await page.getByLabel("Tema",{exact:true}).selectOption("light");
   await page.goto(base+"/?view=month");
   fs.mkdirSync("test-results",{recursive:true});
-  const brandPath=page.getByRole("link",{name:"Yummy — Calendário",exact:true}).locator("svg path").first();
+  const brandPath=page.getByRole("link",{name:"Yummy! — Calendário",exact:true}).locator("svg path").first();
   const lightBrand=await brandPath.evaluate(element=>getComputedStyle(element).fill);
   assert.equal(lightBrand,await page.locator("body").evaluate(element=>getComputedStyle(element).color),"Light logo inherits foreground");
   await page.screenshot({path:"test-results/calendar-desktop-light.png",fullPage:true});

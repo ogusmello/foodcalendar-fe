@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { CalendarView } from "./_components/features/CalendarView";
 import type { CalendarViewProps } from "./_components/features/CalendarView/types";
 
-export const metadata: Metadata = { title: "Calendário | Yummy" };
+export const metadata: Metadata = { title: "Calendário | Yummy!" };
 
 export default function Home({ searchParams }: CalendarViewProps) {
   return <section aria-labelledby="calendar-heading" className="space-y-6">

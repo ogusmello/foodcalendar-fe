@@ -1,4 +1,4 @@
-# TODO — Yummy
+# TODO — Yummy!
 
 Checklist consolidada. Marcar itens concluídos conforme a implementação e as verificações correspondentes. Os documentos por tema continuam sendo a referência detalhada.
 
