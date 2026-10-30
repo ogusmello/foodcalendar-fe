@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { Meal, MealPlan, MealType, User } from "./types";
 import { localDate, parseDate, todayInSaoPaulo } from "../calendar";
 
@@ -40,11 +42,12 @@ export function createMockPlans(): MealPlan[] {
   start.setDate(start.getDate() - 28);
   const end = new Date(today);
   end.setDate(end.getDate() + 56);
+  const meals = getMockMeals();
   const types: MealType[] = ["BREAKFAST", "LUNCH", "SNACK", "DINNER", "DESSERT"];
   return mockUsers.flatMap((user, userIndex) => types.flatMap((mealType, typeIndex) => [false, true].map((weekend) => ({
     id: user.id * 100 + typeIndex * 2 + (weekend ? 2 : 1),
     user,
-    meal: mockMeals[typeIndex * 2 + userIndex + (weekend ? 10 : 0)],
+    meal: meals[typeIndex * 2 + userIndex + (weekend ? 10 : 0)],
     mealType,
     startDate: localDate(start),
     endDate: localDate(end),
@@ -57,7 +60,7 @@ export function getMockResponse(path: string): unknown {
   if (url.pathname === "/users") return structuredClone(mockUsers);
   if (url.pathname === "/meals") {
     const name = (url.searchParams.get("name") ?? "").trim().toLocaleLowerCase("pt-BR");
-    return structuredClone(mockMeals.filter((meal) => meal.name.toLocaleLowerCase("pt-BR").includes(name)));
+    return structuredClone(getMockMeals().filter((meal) => meal.name.toLocaleLowerCase("pt-BR").includes(name)));
   }
   if (url.pathname === "/meal-plans") {
     const date = url.searchParams.get("date");
@@ -77,4 +80,26 @@ export function getMockResponse(path: string): unknown {
     return structuredClone(plans);
   }
   throw new Error("Mock endpoint not implemented");
+}
+const mockStorePath = () => path.join(process.cwd(), ".next", "cache", "foodist-mock-meals.json");
+
+export function getMockMeals(): Meal[] {
+  let overrides: Record<string, Partial<Meal>> = {};
+  try { overrides = JSON.parse(fs.readFileSync(mockStorePath(), "utf8")); }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
+  return mockMeals.map(meal => ({ ...meal, ...overrides[String(meal.id)], id: meal.id }));
+}
+
+export function patchMockMeal(id: number, changes: Partial<Pick<Meal, "name" | "description">>): Meal | null {
+  const meals = getMockMeals();
+  const existing = meals.find(meal => meal.id === id);
+  if (!existing) return null;
+  const updated = { ...existing, ...changes };
+  const overrides = Object.fromEntries(meals.map(meal => [String(meal.id), meal.id === id ? updated : meal]));
+  const file = mockStorePath();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(overrides));
+  return updated;
 }
