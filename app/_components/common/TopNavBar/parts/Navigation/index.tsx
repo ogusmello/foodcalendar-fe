@@ -13,6 +13,7 @@ export function Navigation() {
   const params = useSearchParams();
   const requestedDate = params.get("date");
   const userId = params.get("userId");
+  const [revision, setRevision] = useState(0);
   const [today, setToday] = useState("");
   const [result, setResult] = useState<{ key: string; data: NavigationData } | null>(null);
   const date = requestedDate && parseDate(requestedDate) ? requestedDate : today;
@@ -40,7 +41,13 @@ export function Navigation() {
         if (!controller.signal.aborted) setResult({ key, data: { users: [], plans: [], status: "unavailable" } });
       });
     return () => controller.abort();
-  }, [date, userId, key]);
+  }, [date, userId, key, revision]);
+
+  useEffect(() => {
+    const refresh = () => setRevision(value => value + 1);
+    window.addEventListener("foodist:meals-updated", refresh);
+    return () => window.removeEventListener("foodist:meals-updated", refresh);
+  }, []);
 
   const data = result?.key === key ? result.data : null;
 

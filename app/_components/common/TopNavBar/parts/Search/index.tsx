@@ -1,4 +1,6 @@
 "use client";
+import { MealTrigger } from "../../../MealTrigger";
+import { lockPageScroll } from "@/lib/scroll-lock";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -66,8 +68,7 @@ export function Search({ date, userId }: SearchProps) {
 
   useEffect(() => {
     if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockPageScroll();
     const controller = new AbortController();
     const timeout = window.setTimeout(() => {
       fetch(`/api/search?q=${encodeURIComponent(normalizedQuery)}`, { signal: controller.signal })
@@ -81,7 +82,7 @@ export function Search({ date, userId }: SearchProps) {
         });
     }, 250);
     return () => {
-      document.body.style.overflow = previous;
+      unlock();
       window.clearTimeout(timeout);
       controller.abort();
     };
@@ -104,14 +105,14 @@ export function Search({ date, userId }: SearchProps) {
         id="global-search"
         ref={dialog}
         aria-labelledby="search-heading"
-        onClose={() => { setOpen(false); trigger.current?.focus(); }}
+        onClose={() => { setOpen(false); if (!document.querySelector("dialog[open]")) trigger.current?.focus(); }}
         onClick={(event) => {
           const bounds = event.currentTarget.getBoundingClientRect();
           if (event.target === event.currentTarget && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) close();
         }}
         onKeyDown={(event) => {
           if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-          const links = Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>("a[data-search-result]"));
+          const links = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("[data-search-result]"));
           if (!links.length) return;
           event.preventDefault();
           const index = links.findIndex((link) => link === document.activeElement);
@@ -125,7 +126,7 @@ export function Search({ date, userId }: SearchProps) {
           <MagnifyingGlassIcon size={20} aria-hidden="true" className="shrink-0 text-muted-foreground" />
           <label htmlFor="global-search-input" className="sr-only">Refeição ou data, por exemplo 02/11/2026</label>
           <input id="global-search-input" ref={input} type="search" value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
-            if (event.key === "Enter") { event.preventDefault(); dialog.current?.querySelector<HTMLAnchorElement>("a[data-search-result]")?.click(); }
+            if (event.key === "Enter") { event.preventDefault(); dialog.current?.querySelector<HTMLElement>("[data-search-result]")?.click(); }
           }} placeholder="Busque uma refeição, hoje ou uma data…" autoComplete="off" className="min-w-0 flex-1 bg-transparent py-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none" />
           <button type="button" onClick={close} aria-label="Fechar pesquisa" className="flex size-9 shrink-0 items-center justify-center rounded-control text-muted-foreground hover:bg-surface-muted"><XIcon size={18} aria-hidden="true" /></button>
         </div>
@@ -148,11 +149,11 @@ export function Search({ date, userId }: SearchProps) {
               {current && !current.failed && current.meals.length === 0 && <p className="px-3 py-5 text-sm text-muted-foreground">Nenhuma refeição encontrada.</p>}
             </div>
             <ul className="space-y-1">{current?.meals.slice(0, 30).map((meal) => <li key={meal.id}>
-              <Link data-search-result href={`/refeicoes?name=${encodeURIComponent(meal.name)}&mealId=${meal.id}`} onNavigate={close} className="flex items-center gap-3 rounded-control px-3 py-3 hover:bg-surface-muted focus-visible:bg-primary-muted">
+              <MealTrigger meal={meal} searchResult onOpen={close} className="flex w-full items-center gap-3 rounded-control px-3 py-3 text-left hover:bg-surface-muted focus-visible:bg-primary-muted">
                 <span className="rounded-control bg-accent-muted p-2 text-accent"><ForkKnifeIcon size={20} aria-hidden="true" /></span>
                 <span className="min-w-0 flex-1"><span className="block text-sm font-medium">{meal.name}</span><span className="block truncate text-xs text-muted-foreground">{meal.description}</span></span>
                 <ArrowRightIcon size={16} aria-hidden="true" className="text-muted-foreground" />
-              </Link>
+              </MealTrigger>
             </li>)}</ul>
             {current && current.meals.length > 30 && <Link href={`/refeicoes?name=${encodeURIComponent(normalizedQuery)}`} onNavigate={close} className="mt-3 inline-block rounded-control px-3 text-sm text-primary">Ver todas as refeições</Link>}
           </section>

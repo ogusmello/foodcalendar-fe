@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { MealTrigger } from "../../../MealTrigger";
 import { CoffeeIcon, ForkKnifeIcon, CookieIcon, MoonIcon, CakeIcon } from "@phosphor-icons/react";
 import { formatDate } from "@/lib/calendar";
 
@@ -34,11 +34,6 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
         <ul className="flex w-max min-w-full snap-x snap-proximity items-center gap-1.5">
           {items.map(({ slot, plan }) => {
             const Icon = slot.icon;
-            const params = new URLSearchParams({ date, mealType: slot.type });
-            if (plan) {
-              params.set("userId", String(plan.user.id));
-              params.set("planId", String(plan.id));
-            } else if (userId) params.set("userId", userId);
             const subtitle = !data ? "Carregando…"
               : data.status === "unavailable" ? "Indisponível no momento"
               : plan ? plan.meal.name
@@ -47,10 +42,10 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
 
             return (
               <li key={`${slot.type}-${plan?.id ?? "empty"}`} className="shrink-0 snap-start">
-                <Link
-                  href={`/?${params}`}
+                {plan ? (
+                  <MealTrigger meal={plan.meal} context={{ mealType: slot.type, userName: plan.user.name, date }}
                   title={`${slot.label}: ${subtitle}${plan ? ` · ${plan.user.name}` : ""}`}
-                  className={`m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-current/10 px-3 py-1 hover:border-current/40 focus-visible:-outline-offset-2 ${slot.color}`}
+                  className={`m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-current/10 px-3 py-1 text-left hover:border-current/40 focus-visible:-outline-offset-2 ${slot.color}`}
                 >
                   <Icon size={18} aria-hidden="true" className="shrink-0" />
                   <span className="min-w-0">
@@ -60,7 +55,8 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
                     </span>
                     <span className="block truncate text-xs leading-4 font-medium">{subtitle}</span>
                   </span>
-                </Link>
+                  </MealTrigger>
+                ) : (<span className={`m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-current/10 px-3 py-1 ${slot.color}`}><Icon size={18} aria-hidden="true" /><span><span className="block text-[9px] leading-3 font-semibold uppercase tracking-wide">{slot.label}</span><span className="block text-xs leading-4 font-medium">{subtitle}</span></span></span>)}
               </li>
             );
           })}

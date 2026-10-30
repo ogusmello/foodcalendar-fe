@@ -1,3 +1,4 @@
+import { MealTrigger } from "../../common/MealTrigger";
 import { getApi } from "@/lib/api/server";
 import type { Meal } from "@/lib/api/types";
 import type { MealResultsProps } from "./types";
@@ -19,7 +20,7 @@ export async function MealResults({ searchParams }: MealResultsProps) {
       {name && <p className="text-sm text-muted-foreground">Resultados para “{name}”</p>}
       {meals.length === 0 && <p className="rounded-card border border-border bg-surface p-6 text-sm text-muted-foreground">Nenhuma refeição encontrada.</p>}
       <div className="grid gap-bento sm:grid-cols-2 xl:grid-cols-3">
-        {meals.map((meal) => <article key={meal.id} className={`rounded-card border bg-surface p-6 shadow-card ${selected ? "border-primary" : "border-border"}`}><h2 className="text-lg font-semibold">{meal.name}</h2><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{meal.description}</p></article>)}
+        {meals.map((meal) => <article key={meal.id} className={`rounded-card border bg-surface p-6 shadow-card ${selected ? "border-primary" : "border-border"}`}><h2><MealTrigger meal={meal} className="w-full rounded-control text-left text-lg font-semibold hover:text-primary">{meal.name}</MealTrigger></h2><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{meal.description}</p></article>)}
       </div>
     </div>
   );
