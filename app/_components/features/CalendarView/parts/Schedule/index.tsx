@@ -1,5 +1,6 @@
 import { WorkflowTrigger } from "../../../../common/Workflow";
-import { MealTrigger } from "../../../../common/MealTrigger";
+import { MealTypeIcon } from "../../../../common/MealTypeIcon";
+import { MealCard } from "../MealCard";
 import Link from "next/link";
 import { formatDate } from "@/lib/calendar";
 import { mealCategories } from "@/lib/meals";
@@ -12,12 +13,8 @@ export function Schedule({ days, events, links, today, userId, selectedDate, inc
       {mealCategories.map(category => {
         const plans = meals.filter(plan => plan.mealType === category.type);
         return <section key={category.type} className={`rounded-card p-4 ${category.color}`}>
-          <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide">{category.label}</h3>
-          {plans.length ? <ul className="space-y-3">{plans.map(plan => <li key={plan.id} className="rounded-control bg-surface/70 p-3">
-            <p className="mb-1 text-xs font-medium">{plan.user.name}</p>
-            <MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: days[0], plan }} className="rounded text-left text-sm font-semibold hover:underline">{plan.meal.name}</MealTrigger>
-            <p className="mt-2 text-xs leading-5 text-foreground">{plan.meal.description}</p>
-          </li>)}</ul> : <div className="space-y-2"><p className="text-xs">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p><WorkflowTrigger request={{ kind: "plan", date: days[0], mealType: category.type, userId: userId ?? undefined }} className="rounded text-xs underline">+ Adicionar</WorkflowTrigger></div>}
+          <h3 className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-wide"><MealTypeIcon type={category.type} size={14} />{category.label}</h3>
+          {plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealCard plan={plan} date={days[0]} variant="detailed" /></li>)}</ul> : <div className="space-y-2"><p className="text-xs">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p><WorkflowTrigger request={{ kind: "plan", date: days[0], mealType: category.type, userId: userId ?? undefined }} className="rounded text-xs underline">+ Adicionar</WorkflowTrigger></div>}
         </section>;
       })}
     </div>;
@@ -32,10 +29,10 @@ export function Schedule({ days, events, links, today, userId, selectedDate, inc
         {days.map(day => <th key={day} scope="col" className={`border-r border-b border-border p-2 text-left last:border-r-0 ${day === selectedDate ? "bg-primary-muted/40" : "bg-background"}`}><Link href={links[day]} aria-current={day === selectedDate ? "date" : undefined} className="block rounded-control"><span className="block text-[10px] font-medium capitalize text-muted-foreground">{formatDate(day, { weekday: "short" })}</span><span className={`mt-1 flex size-7 items-center justify-center rounded-full text-sm ${day === today ? "bg-primary text-primary-foreground" : "text-foreground"}`}>{Number(day.slice(-2))}</span></Link></th>)}
       </tr></thead>
       <tbody>{mealCategories.map(category => <tr key={category.type}>
-        <th scope="row" className="sticky left-0 z-10 border-r border-b border-border bg-surface px-3 py-4 text-left text-[10px] font-medium text-muted-foreground">{category.label}</th>
+        <th scope="row" className="sticky left-0 z-10 border-r border-b border-border bg-surface px-2.5 py-3 text-left text-[10px] font-medium text-muted-foreground"><span className="flex items-center gap-1.5 leading-4"><MealTypeIcon type={category.type} size={14} />{category.label}</span></th>
         {days.map(day => {
           const plans = events[day]?.filter(plan => plan.mealType === category.type) ?? [];
-          return <td key={day} className={`border-r border-b border-border p-1.5 align-top last:border-r-0 ${day === selectedDate ? "bg-primary-muted/15" : ""}`}>{plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: day, plan }} className={`block w-full rounded-control px-2 py-2 text-left ${category.color}`}><span className="block text-[11px] font-medium leading-4">{plan.meal.name}</span><span className="mt-1 block text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <WorkflowTrigger request={{ kind: "plan", date: day, mealType: category.type, userId: userId ?? undefined }} className="rounded text-[10px] text-primary">+ Adicionar</WorkflowTrigger>}</td>;
+          return <td key={day} className={`border-r border-b border-border p-1.5 align-top last:border-r-0 ${day === selectedDate ? "bg-primary-muted/15" : ""}`}>{plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealCard plan={plan} date={day} /></li>)}</ul> : <WorkflowTrigger request={{ kind: "plan", date: day, mealType: category.type, userId: userId ?? undefined }} className="rounded text-[10px] text-primary">+ Adicionar</WorkflowTrigger>}</td>;
         })}
       </tr>)}</tbody>
     </table>

@@ -1,26 +1,19 @@
-import { CoffeeIcon, ForkKnifeIcon, CookieIcon, MoonIcon, CakeIcon } from "@phosphor-icons/react/dist/ssr";
+import { MealTypeIcon } from "../../../../common/MealTypeIcon";
 import { mealCategories } from "@/lib/meals";
 import { MealTrigger } from "../../../../common/MealTrigger";
 import type { DayMealsProps } from "./types";
 
-const icons = {
-  BREAKFAST: CoffeeIcon,
-  LUNCH: ForkKnifeIcon,
-  SNACK: CookieIcon,
-  DINNER: MoonIcon,
-  DESSERT: CakeIcon,
-};
+
 
 export function DayMeals({ plans, date, incomplete }: DayMealsProps) {
   return (
     <div className="mt-4 space-y-4">
       {mealCategories.map(category => {
         const meals = plans.filter(plan => plan.mealType === category.type);
-        const Icon = icons[category.type];
         return (
           <section key={category.type}>
             <h3 className="mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-wide text-muted-foreground">
-              <Icon size={14} aria-hidden="true" className="shrink-0" />
+              <MealTypeIcon type={category.type} size={14} aria-hidden="true" className="shrink-0" />
               {category.label}
             </h3>
             {meals.length ? (
@@ -33,7 +26,7 @@ export function DayMeals({ plans, date, incomplete }: DayMealsProps) {
                       title={`${plan.meal.name} · ${plan.user.name}`}
                       className={`flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left ${category.color}`}
                     >
-                      <Icon size={17} aria-hidden="true" className="shrink-0" />
+                      <MealTypeIcon type={category.type} size={17} aria-hidden="true" className="shrink-0" />
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="text-xs font-medium leading-4">{plan.meal.name}</span>
                         <span className="text-[10px] leading-3">{plan.user.name}</span>

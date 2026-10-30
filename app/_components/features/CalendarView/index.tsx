@@ -1,3 +1,4 @@
+import { MealTypeIcon } from "../../common/MealTypeIcon";
 import { AnimatedSurface } from "../../common/AnimatedSurface";
 import { WorkflowTrigger } from "../../common/Workflow";
 import { DayMeals } from "./parts/DayMeals";
@@ -75,7 +76,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
           </table>
         </div>
         : <Schedule userId={person} days={days} events={Object.fromEntries(days.map(day => [day, occurrences(day)]))} links={Object.fromEntries(days.map(day => [day, href(day)]))} today={today} selectedDate={date} incomplete={incomplete} />}
-        <ul aria-label="Legenda dos tipos de refeição" className="flex flex-wrap gap-2 p-4">{mealCategories.map(item => <li key={item.type} className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${item.color}`}>{item.label}</li>)}</ul>
+        <ul aria-label="Legenda dos tipos de refeição" className="flex flex-wrap gap-2 p-4">{mealCategories.map(item => <li key={item.type} className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium ${item.color}`}><MealTypeIcon type={item.type} size={12} />{item.label}</li>)}</ul>
       </section>
       {view === "month" && <aside aria-labelledby="selected-day-heading" className="rounded-card border border-border bg-surface p-5 shadow-card">
         <p className="text-xs capitalize text-muted-foreground">{formatDate(date, { weekday: "long" })}</p>
