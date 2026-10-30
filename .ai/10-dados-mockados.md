@@ -14,7 +14,7 @@
 - Página inicial com semana completa, mudança de semana, seleção do dia e filtro de pessoa.
 - Catálogo com as 20 refeições e detalhe filtrado pelos resultados de pesquisa.
 - Configurações com os dois perfis e controle de tema.
-- Aviso global de modo demonstração. Nenhum dado é gravado no backend; os mocks são de leitura e reiniciam a partir das fixtures.
+- Aviso global de modo demonstração. Nenhum dado é gravado no backend; as refeições agora permitem edição de demonstração, persistida em .next/cache/foodist-mock-meals.json. Limpar esse arquivo restaura as fixtures. Ver 12-modal-refeicao.md.
 
 ## Ativar e desativar
 - USE_MOCK_DATA=true ativa explicitamente os mocks, mesmo com API_BASE_URL definida.
