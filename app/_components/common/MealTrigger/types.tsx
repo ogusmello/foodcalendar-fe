@@ -8,6 +8,7 @@ export interface MealTriggerProps {
   children: ReactNode;
   className?: string;
   title?: string;
+  ariaLabel?: string;
   searchResult?: boolean;
   onOpen?: () => void;
 }

@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import { useMealDialog } from "../MealDialog";
 import type { MealTriggerProps } from "./types";
 
-export function MealTrigger({ meal, context, children, className, title, searchResult, onOpen }: MealTriggerProps) {
+export function MealTrigger({ meal, context, children, className, title, ariaLabel, searchResult, onOpen }: MealTriggerProps) {
   const { openMeal } = useMealDialog();
   return <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}
     type="button"
     aria-haspopup="dialog"
+    aria-label={ariaLabel}
     data-search-result={searchResult ? "" : undefined}
     title={title}
     onClick={() => { onOpen?.(); openMeal(meal, context); }}

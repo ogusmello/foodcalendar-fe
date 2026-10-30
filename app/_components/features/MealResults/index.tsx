@@ -20,7 +20,14 @@ export async function MealResults({ searchParams }: MealResultsProps) {
       {name && <p className="text-sm text-muted-foreground">Resultados para “{name}”</p>}
       {meals.length === 0 && <p className="rounded-card border border-border bg-surface p-6 text-sm text-muted-foreground">Nenhuma refeição encontrada.</p>}
       <div className="grid gap-bento sm:grid-cols-2 xl:grid-cols-3">
-        {meals.map((meal) => <article key={meal.id} className={`rounded-card border bg-surface p-6 shadow-card ${selected ? "border-primary" : "border-border"}`}><h2><MealTrigger meal={meal} className="w-full rounded-control text-left text-lg font-semibold hover:text-primary">{meal.name}</MealTrigger></h2><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{meal.description}</p></article>)}
+        {meals.map((meal) => (
+          <article key={meal.id}>
+            <MealTrigger meal={meal} ariaLabel={meal.name} className={`group block h-full w-full rounded-card border bg-surface p-6 text-left shadow-card hover:border-primary ${selected ? "border-primary" : "border-border"}`}>
+              <span role="heading" aria-level={2} className="block text-lg font-semibold group-hover:text-primary">{meal.name}</span>
+              <span className="mt-2 block whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{meal.description}</span>
+            </MealTrigger>
+          </article>
+        ))}
       </div>
     </div>
   );
