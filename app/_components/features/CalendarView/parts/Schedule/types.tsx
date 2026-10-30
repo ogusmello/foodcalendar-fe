@@ -5,6 +5,7 @@ export interface ScheduleProps {
   events: Record<string, MealPlan[]>;
   links: Record<string, string>;
   today: string;
+  userId: string | null;
   selectedDate: string;
   incomplete: boolean;
 }

@@ -1,10 +1,11 @@
+import { WorkflowTrigger } from "../../../../common/Workflow";
 import { MealTrigger } from "../../../../common/MealTrigger";
 import Link from "next/link";
 import { formatDate } from "@/lib/calendar";
 import { mealCategories } from "@/lib/meals";
 import type { ScheduleProps } from "./types";
 
-export function Schedule({ days, events, links, today, selectedDate, incomplete }: ScheduleProps) {
+export function Schedule({ days, events, links, today, userId, selectedDate, incomplete }: ScheduleProps) {
   if (days.length === 1) {
     const meals = events[days[0]] ?? [];
     return <div aria-label="Calendário diário" className="grid gap-bento p-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -14,9 +15,9 @@ export function Schedule({ days, events, links, today, selectedDate, incomplete 
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide">{category.label}</h3>
           {plans.length ? <ul className="space-y-3">{plans.map(plan => <li key={plan.id} className="rounded-control bg-surface/70 p-3">
             <p className="mb-1 text-xs font-medium">{plan.user.name}</p>
-            <MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: days[0] }} className="rounded text-left text-sm font-semibold hover:underline">{plan.meal.name}</MealTrigger>
+            <MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: days[0], plan }} className="rounded text-left text-sm font-semibold hover:underline">{plan.meal.name}</MealTrigger>
             <p className="mt-2 text-xs leading-5 text-foreground">{plan.meal.description}</p>
-          </li>)}</ul> : <p className="text-xs">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>}
+          </li>)}</ul> : <div className="space-y-2"><p className="text-xs">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p><WorkflowTrigger request={{ kind: "plan", date: days[0], mealType: category.type, userId: userId ?? undefined }} className="rounded text-xs underline">+ Adicionar</WorkflowTrigger></div>}
         </section>;
       })}
     </div>;
@@ -34,7 +35,7 @@ export function Schedule({ days, events, links, today, selectedDate, incomplete 
         <th scope="row" className="sticky left-0 z-10 border-r border-b border-border bg-surface px-3 py-4 text-left text-[10px] font-medium text-muted-foreground">{category.label}</th>
         {days.map(day => {
           const plans = events[day]?.filter(plan => plan.mealType === category.type) ?? [];
-          return <td key={day} className={`border-r border-b border-border p-1.5 align-top last:border-r-0 ${day === selectedDate ? "bg-primary-muted/15" : ""}`}>{plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: day }} className={`block w-full rounded-control px-2 py-2 text-left ${category.color}`}><span className="block text-[11px] font-medium leading-4">{plan.meal.name}</span><span className="mt-1 block text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <span className="text-[10px] text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição"}</span>}</td>;
+          return <td key={day} className={`border-r border-b border-border p-1.5 align-top last:border-r-0 ${day === selectedDate ? "bg-primary-muted/15" : ""}`}>{plans.length ? <ul className="space-y-1.5">{plans.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date: day, plan }} className={`block w-full rounded-control px-2 py-2 text-left ${category.color}`}><span className="block text-[11px] font-medium leading-4">{plan.meal.name}</span><span className="mt-1 block text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <WorkflowTrigger request={{ kind: "plan", date: day, mealType: category.type, userId: userId ?? undefined }} className="rounded text-[10px] text-primary">+ Adicionar</WorkflowTrigger>}</td>;
         })}
       </tr>)}</tbody>
     </table>

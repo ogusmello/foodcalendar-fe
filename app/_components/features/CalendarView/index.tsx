@@ -1,3 +1,4 @@
+import { WorkflowTrigger } from "../../common/Workflow";
 import { MealTrigger } from "../../common/MealTrigger";
 import Link from "next/link";
 import { getApi } from "@/lib/api/server";
@@ -43,6 +44,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
   const title = view === "month" ? formatDate(date, { month: "long", year: "numeric" }) : view === "week" ? `${formatDate(days[0])} – ${formatDate(days[6], { day: "numeric", month: "long", year: "numeric" })}` : formatDate(date, { weekday: "long", day: "numeric", month: "long" });
 
   return <div className="space-y-4">
+    <div className="flex flex-wrap gap-2"><WorkflowTrigger request={{ kind: "plan", date, userId: person ?? undefined }}>Adicionar ao calendário</WorkflowTrigger><WorkflowTrigger request={{ kind: "clone", date, userId: person ?? undefined }} className="rounded-control border border-border bg-surface px-4 py-2 text-sm">Copiar período</WorkflowTrigger>{users.length === 0 && <WorkflowTrigger request={{ kind: "user" }}>Adicionar pessoa</WorkflowTrigger>}</div>
     <div className="flex flex-wrap items-center justify-between gap-4">
       <nav aria-label="Pessoa no calendário" className="flex flex-wrap gap-2">
         {[{ id: "", name: "Ambos" }, ...users.map(user => ({ id: String(user.id), name: user.name }))].map(user => <Link key={user.id} href={href(date, user.id || null)} aria-current={(person ?? "") === user.id ? "page" : undefined} className={`rounded-full px-4 py-2 text-sm ${(person ?? "") === user.id ? "bg-primary text-primary-foreground" : "bg-surface text-muted-foreground"}`}>{user.name}</Link>)}
@@ -68,10 +70,10 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
           <table className="w-full min-w-[42rem] table-fixed border-separate border-spacing-0">
             <caption className="sr-only">{formatDate(date, { month: "long", year: "numeric" })}, refeições planejadas por dia</caption>
             <thead><tr>{headings.map(day => <th key={day} scope="col" className="border-r border-b border-border bg-background px-2 py-3 text-left text-xs font-medium text-muted-foreground last:border-r-0">{day}</th>)}</tr></thead>
-            <tbody>{weeks.map(week => <tr key={week[0]}>{week.map(day => <DayCell key={day} date={day} today={today} selected={day === date} inMonth={day.slice(0, 7) === date.slice(0, 7)} plans={occurrences(day)} href={href(day)} incomplete={incomplete} />)}</tr>)}</tbody>
+            <tbody>{weeks.map(week => <tr key={week[0]}>{week.map(day => <DayCell userId={person} key={day} date={day} today={today} selected={day === date} inMonth={day.slice(0, 7) === date.slice(0, 7)} plans={occurrences(day)} href={href(day)} incomplete={incomplete} />)}</tr>)}</tbody>
           </table>
         </div>
-        : <Schedule days={days} events={Object.fromEntries(days.map(day => [day, occurrences(day)]))} links={Object.fromEntries(days.map(day => [day, href(day)]))} today={today} selectedDate={date} incomplete={incomplete} />}
+        : <Schedule userId={person} days={days} events={Object.fromEntries(days.map(day => [day, occurrences(day)]))} links={Object.fromEntries(days.map(day => [day, href(day)]))} today={today} selectedDate={date} incomplete={incomplete} />}
         <ul aria-label="Legenda dos tipos de refeição" className="flex flex-wrap gap-2 p-4">{mealCategories.map(item => <li key={item.type} className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${item.color}`}>{item.label}</li>)}</ul>
       </section>
       {view === "month" && <aside aria-labelledby="selected-day-heading" className="rounded-card border border-border bg-surface p-5 shadow-card">
@@ -80,7 +82,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
         <p className="mt-1 text-xs text-muted-foreground">{selectedPlans.length} refeições{incomplete ? " · dados parciais" : ""}</p>
         <div className="mt-5 space-y-5">{mealCategories.map(item => {
           const meals = selectedPlans.filter(plan => plan.mealType === item.type);
-          return <section key={item.type}><h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{item.label}</h3>{meals.length ? <ul className="space-y-2">{meals.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date }} className={`block w-full rounded-control px-3 py-2.5 text-left ${item.color}`}><span className="block text-xs font-medium">{plan.meal.name}</span><span className="text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <p className="text-xs text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>}</section>;
+          return <section key={item.type}><h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{item.label}</h3>{meals.length ? <ul className="space-y-2">{meals.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date, plan }} className={`block w-full rounded-control px-3 py-2.5 text-left ${item.color}`}><span className="block text-xs font-medium">{plan.meal.name}</span><span className="text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <p className="text-xs text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>}</section>;
         })}</div>
         <Link href={`/?view=week&date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}

@@ -6,6 +6,7 @@ import { ForkKnifeIcon, PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { mealCategories } from "@/lib/meals";
 import { formatDate } from "@/lib/calendar";
 import { lockPageScroll } from "@/lib/scroll-lock";
+import { useWorkflow } from "../Workflow";
 import { MealForm } from "./parts/MealForm";
 import type { MealDialogContextValue, MealDialogProps, MealSelection } from "./types";
 
@@ -25,6 +26,7 @@ export function MealDialogProvider({ children }: MealDialogProps) {
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
   const router = useRouter();
+  const workflow = useWorkflow();
 
   const selectedId = selection?.meal.id;
 
@@ -80,6 +82,11 @@ export function MealDialogProvider({ children }: MealDialogProps) {
           router.refresh();
         }} /> : <>
           {saved && <p role="status" className="mb-4 text-xs text-success">Refeição atualizada.</p>}
+          <div className="mb-4 flex flex-wrap gap-2">
+            <button type="button" onClick={() => { close(); workflow.open({ kind: "plan", meal: selection.meal, date: selection.context?.date, mealType: selection.context?.mealType, userId: selection.context?.plan ? String(selection.context.plan.user.id) : undefined }); }} className="rounded-control border border-border px-3 py-2 text-xs">Planejar esta refeição</button>
+            {selection.context?.plan && <><button type="button" onClick={() => { close(); workflow.open({ kind: "edit-plan", plan: selection.context!.plan }); }} className="rounded-control border border-border px-3 py-2 text-xs">Editar planejamento</button><button type="button" onClick={() => { close(); workflow.open({ kind: "delete-plan", plan: selection.context!.plan }); }} className="rounded-control px-3 py-2 text-xs text-danger">Excluir planejamento</button></>}
+            <button type="button" onClick={() => { close(); workflow.open({ kind: "delete-meal", meal: selection.meal }); }} className="rounded-control px-3 py-2 text-xs text-danger">Excluir refeição</button>
+          </div>
           <div className="flex justify-end gap-2">
             <button type="button" onClick={close} className="rounded-control border border-border px-4 py-2 text-sm">Fechar</button>
             <button type="button" onClick={() => setEditing(true)} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover"><PencilSimpleIcon size={16} aria-hidden="true" />Editar refeição</button>

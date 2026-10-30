@@ -1,3 +1,4 @@
+import { WorkflowTrigger } from "../_components/common/Workflow";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { MealResults } from "../_components/features/MealResults";
@@ -12,6 +13,7 @@ export default function MealsPage({ searchParams }: MealResultsProps) {
         <h1 id="meals-heading" className="text-2xl font-semibold tracking-tight sm:text-3xl">Refeições</h1>
         <p className="mt-2 text-muted-foreground">As opções que fazem parte da rotina de vocês.</p>
       </div>
+      <WorkflowTrigger request={{ kind: "meal" }}>Nova refeição</WorkflowTrigger>
       <Suspense fallback={<p role="status" className="text-sm text-muted-foreground">Carregando refeições…</p>}>
         <MealResults searchParams={searchParams} />
       </Suspense>

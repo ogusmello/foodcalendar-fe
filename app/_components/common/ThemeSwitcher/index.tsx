@@ -75,7 +75,7 @@ export function ThemeSwitcher({ variant = "select" }: ThemeSwitcherProps) {
   return (
     <label className="flex items-center gap-2 text-sm text-muted-foreground">
       <span>Tema</span>
-      <select
+      <select aria-label="Tema"
         value={preference}
         onChange={(event) => changeTheme(event.target.value)}
         className="rounded-control border border-border bg-surface px-3 py-2 text-sm text-foreground"
