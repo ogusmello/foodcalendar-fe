@@ -61,3 +61,6 @@ Implementados meal-breakfast, meal-lunch, meal-snack, meal-dinner e meal-dessert
 
 ## Refinamento dos tokens de refeições
 Valores dessaturados nos dois temas, preservando as cinco famílias. Contraste mínimo dos pares de categoria: 4,81:1 no claro e 6,86:1 no escuro.
+
+## Scrollbars
+Barras globais finas, com trilho transparente e thumb arredondado. A variável scrollbar-thumb tem valores discretos por tema. A faixa de refeições oculta sua scrollbar; no desktop usa setas e no mobile mantém o gesto nativo.

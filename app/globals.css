@@ -14,6 +14,7 @@
   --meal-dinner-foreground: #695782;
   --meal-dessert: #f4e8ed;
   --meal-dessert-foreground: #825b6c;
+  --scrollbar-thumb: #c2cbc2;
   --background: #f5f6f2;
   --surface: #ffffff;
   --surface-muted: #edf0e9;
@@ -53,6 +54,7 @@
   --meal-dinner-foreground: #beb1d0;
   --meal-dessert: #342b31;
   --meal-dessert-foreground: #cfb0bd;
+  --scrollbar-thumb: #46554b;
   --background: #141a17;
   --surface: #1c2420;
   --surface-muted: #27312b;
@@ -135,6 +137,25 @@
 }
 
 @layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+  }
+
   body {
     @apply bg-background font-sans text-foreground;
   }
