@@ -93,4 +93,4 @@ O contrato oferece refeições com nome e descrição, sem ingredientes estrutur
 - O contrato não oferece mutação em lote para o casal. Uma futura ação para ambos exige chamadas separadas e tratamento de sucesso parcial, sem presumir atomicidade.
 
 ## TopNav implementada
-O resumo diário usa mealType como eixo e uma linha por pessoa, com barras para as refeições. Não há campo de horário no contrato; não criar horários presumidos. As rotas internas do Next usam API_BASE_URL (endereço base sem /v1) para acesso pelo servidor. Ver 09-topnav-e-busca.md e .env.example.
+O resumo diário usa uma faixa rolável de pílulas com ícone, mealType e nome da refeição; na visão conjunta, cada item identifica sua pessoa. Não há campo de horário no contrato; não criar horários presumidos. As rotas internas do Next usam API_BASE_URL (endereço base sem /v1) para acesso pelo servidor. Ver 09-topnav-e-busca.md e .env.example.

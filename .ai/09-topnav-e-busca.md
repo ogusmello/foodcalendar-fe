@@ -6,9 +6,9 @@
 - Componentes internos em TopNavBar/parts, com tipos em types.tsx quando necessários.
 
 ## Mini calendário — referência confirmada
-- Grade compacta com colunas por mealType e linhas por pessoa.
-- Refeições apresentadas como barras de evento dentro das células, com identificação da pessoa na coluna fixa à esquerda.
-- Rolagem horizontal nativa e botões para deslocar o conteúdo. Não usar uma sequência de cards independentes.
+- Faixa horizontal em um único bloco arredondado, conforme a referência de pílulas enviada pelo usuário. Sem tabela ou grade.
+- Pílulas lado a lado com ícone à esquerda, mealType em texto pequeno acima e nome da refeição abaixo. Na visão conjunta, identificar também a pessoa.
+- Rolagem horizontal nativa dentro da faixa, com conteúdo seguinte parcialmente visível e scrollbar oculta. Navegável por teclado; sem cabeçalhos de tabela, linhas de grade ou botões de calendário.
 - Não atribuir horários, duração ou escala de horas: o backend oferece BREAKFAST, LUNCH, SNACK, DINNER e DESSERT, sem horário.
 - O dia e a pessoa são lidos da URL; sem filtro individual, mostrar a visão conjunta dos usuários cadastrados no contexto pessoal da aplicação.
 - Cada pessoa é consultada com userId e date completos; falhas parciais são indicadas.
