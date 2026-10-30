@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { People } from "../_components/features/People";
 import { ThemeSwitcher } from "../_components/common/ThemeSwitcher";
 
 export const metadata: Metadata = { title: "Configurações | Foodist" };
@@ -19,7 +21,7 @@ export default function SettingsPage() {
       </div>
       <div className="rounded-card border border-border bg-surface p-6 shadow-card">
         <h2 className="text-lg font-semibold">Pessoas</h2>
-        <p className="mt-2 text-sm text-muted-foreground">A gestão dos nomes de vocês será conectada à API em uma próxima fase.</p>
+        <Suspense fallback={<p role="status" className="mt-3 text-sm text-muted-foreground">Carregando pessoas…</p>}><People /></Suspense>
       </div>
     </section>
   );
