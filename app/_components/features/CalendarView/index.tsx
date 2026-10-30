@@ -1,6 +1,6 @@
 import { AnimatedSurface } from "../../common/AnimatedSurface";
 import { WorkflowTrigger } from "../../common/Workflow";
-import { MealTrigger } from "../../common/MealTrigger";
+import { DayMeals } from "./parts/DayMeals";
 import Link from "next/link";
 import { getApi } from "@/lib/api/server";
 import type { MealPlan, User } from "@/lib/api/types";
@@ -81,10 +81,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
         <p className="text-xs capitalize text-muted-foreground">{formatDate(date, { weekday: "long" })}</p>
         <h2 id="selected-day-heading" className="mt-1 text-lg font-semibold">{formatDate(date, { day: "numeric", month: "long" })}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{selectedPlans.length} refeições{incomplete ? " · dados parciais" : ""}</p>
-        <div className="mt-5 space-y-5">{mealCategories.map(item => {
-          const meals = selectedPlans.filter(plan => plan.mealType === item.type);
-          return <section key={item.type}><h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{item.label}</h3>{meals.length ? <ul className="space-y-2">{meals.map(plan => <li key={plan.id}><MealTrigger meal={plan.meal} context={{ mealType: plan.mealType, userName: plan.user.name, date, plan }} className={`block w-full rounded-control px-3 py-2.5 text-left ${item.color}`}><span className="block text-xs font-medium">{plan.meal.name}</span><span className="text-[10px]">{plan.user.name}</span></MealTrigger></li>)}</ul> : <p className="text-xs text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>}</section>;
-        })}</div>
+        <DayMeals plans={selectedPlans} date={date} incomplete={incomplete} />
         <Link href={`/?view=week&date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}
     </AnimatedSurface>

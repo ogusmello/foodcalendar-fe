@@ -31,3 +31,5 @@ Lint, TypeScript e build aprovados. Verificação temporária cobriu início/fim
 
 ## Calendário como página inicial
 O calendário substitui o planejamento anterior na rota /. Sidebar, busca de datas, TopNav e links internos apontam para a Home. /calendario redireciona para / preservando query parameters de data, pessoa e visão. A antiga implementação Planning foi removida por não ser mais utilizada. Verificações de lint, build, tipos, renderização das três visões na Home e preservação de parâmetros no redirecionamento aprovadas.
+## Painel de refeições do dia
+DayMeals em CalendarView/parts organiza o painel de detalhes com ícones por tipo junto ao título do grupo e dentro de cada card. Cards têm altura natural, padding compacto, nome com line-height de 16px e pessoa com 12px, separados por 2px. O espaçamento entre cards e grupos também foi reduzido. Os cliques continuam abrindo o modal de refeição. Lint, build, tipos e testes de navegador aprovados.
