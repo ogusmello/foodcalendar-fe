@@ -1,7 +1,7 @@
 # Criação de refeições
 
 ## Status e contrato
-Planejamento para implementação futura, baseado no README do backend recebido e em 07-contrato-backend.md. Não implementa formulários nesta etapa.
+Implementado conforme o README do backend e 07-contrato-backend.md. Ver resultados da execução em 17-execucao.md.
 
 POST /v1/meals cria um recurso compartilhado, com resposta 201 e objeto contendo id, name e description. Tipo de refeição, pessoa, data e recorrência pertencem ao plano, não a este cadastro.
 
@@ -37,3 +37,5 @@ Preservar os campos em falha, mostrar erros 400 por campo e falha geral de rede,
 
 ## Critérios de conclusão
 Criar com mocks e API real pela mesma interface; recurso aparece no catálogo, pode abrir no modal, editar e ser selecionado em um planejamento. Testar textos inválidos, limite de nome, sucesso e falhas sem perder o formulário.
+## Executado
+Cadastro implementado no catálogo e dentro do planejamento, preservando o rascunho e selecionando o ID retornado. Modal, validações, persistência, atualização das telas e estados de erro testados. A edição existente continua separada do vínculo de planejamento.

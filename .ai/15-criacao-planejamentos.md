@@ -1,7 +1,7 @@
 # Criação de planejamentos
 
 ## Status
-Plano para implementação futura. Campos e endpoints abaixo estão documentados no backend; decisões de interação estão propostas para revisão.
+Implementado conforme o contrato documentado. O usuário confirmou a opção Ambos; ver 17-execucao.md.
 
 ## Objetivo e entradas
 Adicionar uma refeição ao calendário, com pessoa, tipo, vigência e recorrência.
@@ -34,10 +34,9 @@ Rótulos em português; enums e datas YYYY-MM-DD no transporte. Não incluir hor
 - Datas passadas são aceitas pelo contrato; não bloquear.
 - Sobreposição e múltiplas refeições no mesmo tipo são permitidas pelo backend. Não sobrescrever planos existentes nem inventar restrição de unicidade.
 
-## Destinatários — proposta a confirmar
-Primeira entrega com uma pessoa obrigatória e explícita por envio. Na visão individual, pré-selecionar a pessoa; em Ambos, solicitar a escolha.
+## Destinatários confirmados
 
-Uma ação futura Aplicar aos dois pode realizar uma chamada por pessoa, mas não existe criação em lote ou transação conjunta. Caso adotada, exigir seleção explícita, informar sucesso parcial e nunca reenviar automaticamente a chamada já concluída. O seletor Ambos do calendário continua sendo apenas um filtro de visualização.
+Selecionar uma ou mais pessoas explicitamente, com atalho Ambos. Cada pessoa gera uma chamada independente. A interface informa sucesso parcial, não reenvia operações concluídas e bloqueia repetição automática em resultado incerto. O filtro Ambos do calendário não cria planos para duas pessoas sem seleção no formulário.
 
 ## Integração
 POST interno /api/meal-plans → POST /v1/meal-plans:
@@ -62,3 +61,5 @@ Após salvar, atualizar calendário, painel do dia, TopNav e sugestões vazias d
 - Timeout pode ter criado o plano: reconsultar antes de orientar repetição, sem afirmar que uma leitura elimina toda ambiguidade. Não repetir POST automaticamente.
 - Evoluir os mocks para persistir os planos criados com as mesmas regras, sem regenerá-los ou duplicá-los a cada consulta.
 - Testar ocorrência única, dias úteis/fim de semana, limites inclusivos, dias sem ocorrência, virada de mês/ano, pessoa ausente e atualização das três visões.
+## Executado — decisão confirmada
+Criação, edição e exclusão de planos implementadas. O usuário escolheu permitir Ambos: selecionar duas pessoas resulta em chamadas independentes, com sucesso parcial informado e repetição apenas das pendentes. Resultado incerto não é reenviado automaticamente. Essa decisão substitui a proposta inicial de uma pessoa por envio. Formulários e ações seguem o modal aprovado; transporte e mocks são persistentes e validados.

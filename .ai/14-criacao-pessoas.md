@@ -1,7 +1,7 @@
 # Criação de pessoas
 
 ## Status e contrato
-Planejamento futuro. POST /v1/users recebe name e retorna 201 com id e name. O recurso é uma pessoa do planejamento, não uma conta autenticada. Não há login ou senha no contrato.
+Implementado. POST /v1/users recebe name e retorna 201 com id e name. O recurso é uma pessoa do planejamento, não uma conta autenticada. Não há login ou senha no contrato.
 
 ## Entrada proposta
 Configurações → Pessoas → Adicionar pessoa. Quando não houver pessoas, o calendário apresenta uma ação para esse fluxo.
@@ -26,3 +26,5 @@ Tratar formulário vazio, limite de tamanho, envio pendente, erro de campo e ind
 Persistir novas pessoas no conjunto de demonstração e disponibilizá-las em todas as leituras. Não gerar planos fictícios automaticamente para novas pessoas: devem começar com planejamento vazio. Os dois perfis iniciais continuam dados demonstrativos.
 
 Testar criação, atualização dos seletores, calendário vazio do novo perfil, validação e falhas de rede. Confirmar que a criação não modifica o planejamento dos perfis existentes.
+## Executado
+Cadastro, edição por PUT e exclusão com confirmação implementados em Configurações. Novos perfis começam sem planos automáticos; seletores e resumo diário são atualizados. Mock persistente, validações e interface foram testados.

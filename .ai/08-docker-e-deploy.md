@@ -45,3 +45,8 @@ Empacotar somente este frontend. O backend pertence a outro repositório; seu em
 Base visual e arquitetura → telas e integração → temas e validação funcional → animações → Docker/Compose → projeto pronto para implantação.
 
 A execução do deploy na VPS é uma ação futura, fora da criação deste plano.
+
+## Implementação e escopo atual
+Dockerfile multiestágio com Node 24, pnpm 12.11.2, saída standalone e usuário uid 1001. compose.yaml inclui porta configurável, healthcheck, reinício e volume persistente para mocks. Sem Nginx. O usuário confirmou que a entrega atual usa apenas dados mockados, portanto USE_MOCK_DATA=true é o padrão; API_BASE_URL é opcional para o futuro. Instruções de execução, atualização e retorno de versão em README.md.
+
+O teste tests/docker-smoke.mjs usa projeto, imagem e volume isolados, testa saúde/arquivos estáticos/uid/persistência após recriação e limpa seus próprios recursos. O deploy na VPS não faz parte desta execução.

@@ -17,123 +17,123 @@ Checklist consolidada. Marcar itens concluídos conforme a implementação e as 
 - [x] Camada de leitura da API e PATCH de refeições conforme o contrato documentado.
 - [x] Planos de criação separados por tema na pasta .ai.
 
-Checks anteriores de lint, tipos, build e HTTP passaram. A revisão visual e de interação em navegador ainda precisa ser concluída; o backend real ainda não foi validado em execução.
+Execução concluída no escopo de demonstração confirmado pelo usuário: somente mocks baseados no README, sem backend local. Lint, tipos, build, testes de integração, testes reais em Chromium e produção standalone foram verificados. A última etapa Docker é registrada abaixo e em 17-execucao.md.
 
 ## 1. Preparar a base de criação
-- [ ] Reaproveitar o padrão aprovado de modal e campos para os novos formulários.
-- [ ] Preparar transporte POST com tratamento de JSON e sucesso sem corpo.
-- [ ] Padronizar erros de campo, erros de negócio e indisponibilidade.
-- [ ] Preservar rascunhos em falhas e impedir envio duplicado enquanto pendente.
-- [ ] Não repetir automaticamente criações ou clonagens em timeout.
-- [ ] Centralizar armazenamento dos mocks para pessoas, refeições e planos.
-- [ ] Preservar as edições atuais de demonstração ao evoluir o armazenamento.
-- [ ] Gerar IDs estáveis e sem colisões para novos registros.
-- [ ] Definir reset explícito dos mocks sem misturar registros criados com fixtures.
-- [ ] Reutilizar atualização de dados entre calendário, catálogo, TopNav e busca.
+- [x] Reaproveitar o padrão aprovado de modal e campos para os novos formulários.
+- [x] Preparar transporte POST com tratamento de JSON e sucesso sem corpo.
+- [x] Padronizar erros de campo, erros de negócio e indisponibilidade.
+- [x] Preservar rascunhos em falhas e impedir envio duplicado enquanto pendente.
+- [x] Não repetir automaticamente criações ou clonagens em timeout.
+- [x] Centralizar armazenamento dos mocks para pessoas, refeições e planos.
+- [x] Preservar as edições atuais de demonstração ao evoluir o armazenamento.
+- [x] Gerar IDs estáveis e sem colisões para novos registros.
+- [x] Definir reset explícito dos mocks sem misturar registros criados com fixtures.
+- [x] Reutilizar atualização de dados entre calendário, catálogo, TopNav e busca.
 
 ## 2. Criar pessoas
 Referência: [14-criacao-pessoas.md](14-criacao-pessoas.md).
-- [ ] Adicionar botão Adicionar pessoa em Configurações.
-- [ ] Criar formulário de nome obrigatório, com limite de 255 caracteres.
-- [ ] Implementar POST interno /api/users e integração com POST /v1/users.
-- [ ] Persistir pessoas criadas nos mocks.
-- [ ] Atualizar seletores do calendário e perfil após criação.
-- [ ] Oferecer cadastro quando não houver pessoas.
-- [ ] Garantir que uma pessoa nova comece sem planos automáticos.
-- [ ] Validar cadastro, limites e estados de falha.
+- [x] Adicionar botão Adicionar pessoa em Configurações.
+- [x] Criar formulário de nome obrigatório, com limite de 255 caracteres.
+- [x] Implementar POST interno /api/users e integração com POST /v1/users.
+- [x] Persistir pessoas criadas nos mocks.
+- [x] Atualizar seletores do calendário e perfil após criação.
+- [x] Oferecer cadastro quando não houver pessoas.
+- [x] Garantir que uma pessoa nova comece sem planos automáticos.
+- [x] Validar cadastro, limites e estados de falha.
 
 ## 3. Criar refeições
 Referência: [13-criacao-refeicoes.md](13-criacao-refeicoes.md).
-- [ ] Adicionar botão Nova refeição e ação no estado vazio do catálogo.
-- [ ] Adaptar campos de nome e descrição para criação, preservando a edição existente.
-- [ ] Implementar POST interno /api/meals e integração com POST /v1/meals.
-- [ ] Persistir novas refeições nos mocks e usar o ID retornado.
-- [ ] Atualizar catálogo e pesquisa global por nome.
-- [ ] Permitir criar uma refeição dentro do fluxo de planejamento sem perder o rascunho.
-- [ ] Selecionar a refeição recém-criada ao retornar ao formulário de planejamento.
-- [ ] Manter sugestões vazias da busca limitadas ao dia, sem incluir refeições não planejadas.
-- [ ] Validar cadastro, nome de até 255 caracteres, descrição e falhas.
+- [x] Adicionar botão Nova refeição e ação no estado vazio do catálogo.
+- [x] Adaptar campos de nome e descrição para criação, preservando a edição existente.
+- [x] Implementar POST interno /api/meals e integração com POST /v1/meals.
+- [x] Persistir novas refeições nos mocks e usar o ID retornado.
+- [x] Atualizar catálogo e pesquisa global por nome.
+- [x] Permitir criar uma refeição dentro do fluxo de planejamento sem perder o rascunho.
+- [x] Selecionar a refeição recém-criada ao retornar ao formulário de planejamento.
+- [x] Manter sugestões vazias da busca limitadas ao dia, sem incluir refeições não planejadas.
+- [x] Validar cadastro, nome de até 255 caracteres, descrição e falhas.
 
 ## 4. Adicionar refeições ao calendário
 Referência: [15-criacao-planejamentos.md](15-criacao-planejamentos.md).
-- [ ] Criar ação Adicionar ao calendário na Home.
-- [ ] Criar atalhos em dias e tipos de refeição vazios.
-- [ ] Adicionar Planejar esta refeição ao modal de detalhes.
-- [ ] Criar seletor de pessoa, refeição e tipo de refeição.
-- [ ] Pré-preencher campos a partir do contexto de origem.
-- [ ] Implementar ocorrência única com data inicial/final iguais.
-- [ ] Implementar recorrência com período e seleção de dias.
-- [ ] Adicionar atalhos Dias úteis, Fim de semana e Todos os dias.
-- [ ] Exibir prévia das ocorrências antes de salvar.
-- [ ] Validar datas, intervalo, dias e existência de pessoa/refeição.
-- [ ] Sinalizar seleção de dias sem ocorrência na vigência.
-- [ ] Implementar POST interno /api/meal-plans e integração com o backend.
-- [ ] Persistir planos criados nos mocks sem regenerá-los a cada leitura.
-- [ ] Atualizar as três visões, detalhes do dia, TopNav e sugestões da busca.
-- [ ] Oferecer Ver no calendário quando o destino estiver fora do período visível.
-- [ ] Validar recorrência, limites inclusivos e viradas de mês/ano.
+- [x] Criar ação Adicionar ao calendário na Home.
+- [x] Criar atalhos em dias e tipos de refeição vazios.
+- [x] Adicionar Planejar esta refeição ao modal de detalhes.
+- [x] Criar seletor de pessoa, refeição e tipo de refeição.
+- [x] Pré-preencher campos a partir do contexto de origem.
+- [x] Implementar ocorrência única com data inicial/final iguais.
+- [x] Implementar recorrência com período e seleção de dias.
+- [x] Adicionar atalhos Dias úteis, Fim de semana e Todos os dias.
+- [x] Exibir prévia das ocorrências antes de salvar.
+- [x] Validar datas, intervalo, dias e existência de pessoa/refeição.
+- [x] Sinalizar seleção de dias sem ocorrência na vigência.
+- [x] Implementar POST interno /api/meal-plans e integração com o backend.
+- [x] Persistir planos criados nos mocks sem regenerá-los a cada leitura.
+- [x] Atualizar as três visões, detalhes do dia, TopNav e sugestões da busca.
+- [x] Oferecer Ver no calendário quando o destino estiver fora do período visível.
+- [x] Validar recorrência, limites inclusivos e viradas de mês/ano.
 
 ## 5. Clonar períodos
 Referência: [16-clonagem-periodos.md](16-clonagem-periodos.md).
-- [ ] Criar ação Copiar período no calendário.
-- [ ] Listar origens agrupadas pela pessoa e vigência exata dos planos.
-- [ ] Criar formulário de pessoa, origem e intervalo de destino.
-- [ ] Exibir prévia do conteúdo a copiar e dos dias mantidos.
-- [ ] Implementar POST interno /api/meal-plans/clone.
-- [ ] Tratar sucesso 201 sem corpo e reconsultar o destino.
-- [ ] Tratar erros 400, 404 e 409 sem perder os campos.
-- [ ] Reproduzir origem exata e conflitos do contrato nos mocks.
-- [ ] Persistir cópias com novos IDs sem alterar a origem.
-- [ ] Validar durações diferentes e sobreposições parciais.
-- [ ] Atualizar calendário e oferecer acesso ao período copiado.
+- [x] Criar ação Copiar período no calendário.
+- [x] Listar origens agrupadas pela pessoa e vigência exata dos planos.
+- [x] Criar formulário de pessoa, origem e intervalo de destino.
+- [x] Exibir prévia do conteúdo a copiar e dos dias mantidos.
+- [x] Implementar POST interno /api/meal-plans/clone.
+- [x] Tratar sucesso 201 sem corpo e reconsultar o destino.
+- [x] Tratar erros 400, 404 e 409 sem perder os campos.
+- [x] Reproduzir origem exata e conflitos do contrato nos mocks.
+- [x] Persistir cópias com novos IDs sem alterar a origem.
+- [x] Validar durações diferentes e sobreposições parciais.
+- [x] Atualizar calendário e oferecer acesso ao período copiado.
 
 ## 6. Completar a gestão prevista no escopo
 Contrato: [07-contrato-backend.md](07-contrato-backend.md).
-- [ ] Permitir editar nome de pessoa com PUT /v1/users/{id}.
-- [ ] Planejar em detalhe e implementar edição do plano com PATCH /v1/meal-plans/{id}.
-- [ ] Distinguir Editar refeição de Editar planejamento no contexto do evento.
-- [ ] Informar que editar o plano afeta a recorrência inteira; não oferecer alteração isolada de ocorrência sem suporte do backend.
-- [ ] Permitir excluir um plano, preservando pessoa e refeição.
-- [ ] Permitir excluir refeição, confirmando a remoção dos planos associados.
-- [ ] Permitir excluir pessoa, confirmando a remoção de seus planos.
-- [ ] Reproduzir exclusões em cascata nos mocks.
-- [ ] Atualizar listas, seletores e calendário após alterações e exclusões.
+- [x] Permitir editar nome de pessoa com PUT /v1/users/{id}.
+- [x] Planejar em detalhe e implementar edição do plano com PATCH /v1/meal-plans/{id}.
+- [x] Distinguir Editar refeição de Editar planejamento no contexto do evento.
+- [x] Informar que editar o plano afeta a recorrência inteira; não oferecer alteração isolada de ocorrência sem suporte do backend.
+- [x] Permitir excluir um plano, preservando pessoa e refeição.
+- [x] Permitir excluir refeição, confirmando a remoção dos planos associados.
+- [x] Permitir excluir pessoa, confirmando a remoção de seus planos.
+- [x] Reproduzir exclusões em cascata nos mocks.
+- [x] Atualizar listas, seletores e calendário após alterações e exclusões.
 
 ## 7. Fechar decisões e validar integração
-- [ ] Confirmar se a criação/clonagem terá apenas uma pessoa por envio ou opção explícita para ambos.
-- [ ] Se houver ação para ambos, definir resultados parciais entre chamadas independentes.
-- [ ] Confirmar gerenciador de pacotes oficial e manter um único lockfile.
-- [ ] Confirmar endereço e acesso ao backend real.
-- [ ] Comparar contrato implementado com o OpenAPI do ambiente disponível.
-- [ ] Validar os fluxos com USE_MOCK_DATA=false, sem fallback silencioso para mocks.
-- [ ] Conferir respostas vazias, mensagens de erro e regras de recorrência.
-- [ ] Validar IDs conforme a representação acordada com o backend.
+- [x] Decisão confirmada: criação e clonagem permitem selecionar Ambos explicitamente.
+- [x] Tratar sucesso parcial para Ambos e reenviar somente pessoas pendentes; resultado incerto bloqueia repetição automática.
+- [x] pnpm confirmado como padrão; package-lock.json removido e instalação frozen validada.
+- [x] Escopo confirmado: o backend não roda neste ambiente; a entrega usa somente mocks.
+- [x] Usar o README fornecido como contrato; consulta a OpenAPI real fora do escopo atual.
+- [x] Validar transporte opcional sem fallback contra servidor externo simulado; não confundir com validação de backend real.
+- [x] Conferir respostas vazias, mensagens de erro e regras de recorrência.
+- [x] Usar IDs numéricos estáveis, sem colisões; rejeitar IDs fora da precisão segura do JavaScript.
 
 ## 8. Revisar experiência e acessibilidade
-- [ ] Conferir desktop e mobile nos temas claro e escuro.
-- [ ] Conferir as três visões com Ambos e com cada pessoa.
-- [ ] Validar teclado, foco, Escape, retorno de foco e troca entre modais.
-- [ ] Conferir estados vazios, carregamento, erros e dados parciais.
-- [ ] Confirmar que criar e editar atualiza todas as regiões sem recarregar a página inteira.
-- [ ] Executar lint, tipos, build e testes adequados aos fluxos implementados.
+- [x] Conferir desktop e mobile nos temas claro e escuro.
+- [x] Conferir as três visões com Ambos e com cada pessoa.
+- [x] Validar teclado, foco, Escape, retorno de foco e troca entre modais.
+- [x] Conferir estados vazios, carregamento, erros e dados parciais.
+- [x] Confirmar que criar e editar atualiza todas as regiões sem recarregar a página inteira.
+- [x] Executar lint, tipos, build e testes adequados aos fluxos implementados.
 
 ## 9. Framer Motion — penúltima etapa
 Referência: [06-animacoes.md](06-animacoes.md).
-- [ ] Definir microinterações e transições úteis nos fluxos já estáveis.
-- [ ] Integrar Framer Motion e tokens de movimento.
-- [ ] Aplicar a controles, modais, Sidebar e mudanças de visualização quando adequado.
-- [ ] Respeitar redução de movimento e preservar foco.
-- [ ] Validar fluidez e ausência de atraso funcional.
+- [x] Definir microinterações e transições úteis nos fluxos já estáveis.
+- [x] Integrar Framer Motion e tokens de movimento.
+- [x] Aplicar a controles, modais, Sidebar e mudanças de visualização quando adequado.
+- [x] Respeitar redução de movimento e preservar foco.
+- [x] Validar fluidez e ausência de atraso funcional.
 
 ## 10. Docker/Compose — última etapa
 Referência: [08-docker-e-deploy.md](08-docker-e-deploy.md).
-- [ ] Preparar build de produção e saída standalone do Next.
-- [ ] Criar Dockerfile em múltiplos estágios.
-- [ ] Criar compose.yaml e .dockerignore.
-- [ ] Executar com usuário sem privilégios e porta configurável, sem Nginx.
-- [ ] Configurar conexão com o backend e variáveis de produção.
-- [ ] Garantir mocks desativados na configuração da API real.
-- [ ] Validar imagem, arquivos estáticos, saúde, logs e reinício.
-- [ ] Documentar execução, atualização e retorno à imagem anterior na VPS.
+- [x] Preparar build de produção e saída standalone do Next.
+- [x] Criar Dockerfile em múltiplos estágios.
+- [x] Criar compose.yaml e .dockerignore.
+- [x] Executar com usuário sem privilégios e porta configurável, sem Nginx.
+- [x] Configurar variáveis de produção e opção futura de backend; mocks são o padrão desta entrega.
+- [x] Manter mocks ativos por padrão e permitir desativá-los explicitamente em futura integração.
+- [x] Validar imagem, arquivos estáticos, saúde, logs e reinício.
+- [x] Documentar execução, atualização e retorno à imagem anterior na VPS.
 
-Deploy na VPS será uma ação futura. Não fazem parte do contrato atual: autenticação, horários, ingredientes estruturados, receitas completas, nutrientes, imagens, lista de compras e assistente.
+Deploy na VPS será uma ação futura; nenhum deploy remoto foi realizado. Não fazem parte do contrato atual: autenticação, horários, ingredientes estruturados, receitas completas, nutrientes, imagens, lista de compras e assistente.

@@ -52,3 +52,6 @@ Esses casos são propostas; implementar os que existirem nos fluxos aprovados. N
 Movimentos consistentes e discretos, sem atraso funcional, perda de foco, flash de tema ou mudança inesperada de layout. Fluxos continuam completos com movimento reduzido.
 
 
+
+## Implementado
+Framer Motion 14.7.1 integrado na penúltima etapa. MotionSystem centraliza MotionConfig com reducedMotion=user; a duração normal é lida do token CSS. AnimatedSurface anima mudanças de visão/data/pessoa; modais, Sidebar e controles receberam movimentos discretos. Tailwind continua responsável pelos estilos estáticos. Chromium verificou fluxos funcionais e a preferência de movimento reduzido. Referência técnica: https://motion.dev/docs/react-accessibility.

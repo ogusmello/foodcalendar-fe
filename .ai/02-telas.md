@@ -1,7 +1,7 @@
 # Telas e fluxos
 
 ## Base atual
-A Home (/) é o calendário com visões Hoje, Semana e Mês. Catálogo e Configurações possuem dados de demonstração; busca e modal de detalhes/edição estão implementados. A criação ainda será implementada conforme os planos 13 a 16. Backend externo documentado em 07-contrato-backend.md.
+A Home (/) é o calendário com visões Hoje, Semana e Mês. Catálogo e Configurações possuem dados de demonstração; busca e modal de detalhes/edição estão implementados. Criação e gestão implementadas conforme os planos 13 a 16; ver checklist e 17-execucao.md. Backend externo documentado em 07-contrato-backend.md.
 
 ## MVP proposto
 | Tela/fluxo | Responsabilidade |
@@ -75,7 +75,7 @@ Esboçar a tela semanal com a visão Ambos como principal e suas variações ind
 - Componentes internos da Sidebar organizados em parts/NavItem com tipos separados.
 - Lint, tipos e build de produção aprovados. Revisão interativa no navegador ainda pendente.
 
-## Próxima implementação: criação
+## Fluxos de criação executados
 1. Base comum de formulários modais e transporte POST, incluindo respostas com e sem corpo e mocks persistentes.
 2. Cadastro de pessoas em Configurações (14-criacao-pessoas.md), permitindo começar sem perfis.
 3. Cadastro de refeições no catálogo e no seletor de planejamento (13-criacao-refeicoes.md).
@@ -86,6 +86,6 @@ O planejamento usa o estilo do modal aprovado, Tailwind e componentes em pastas 
 
 Após criar entidades novas, os mocks devem persistir usuários, refeições e planos em conjunto, com IDs estáveis e sem colisões, preservando as alterações de demonstração existentes. Manter distinção entre fixtures iniciais e registros criados; não regenerar planos automáticos para novos perfis. Centralizar e versionar o armazenamento de demonstração, cujo reset é explícito.
 
-Prioridades acima são propostas; criar para as duas pessoas em um único fluxo ainda requer confirmação de comportamento. O contrato suporta apenas uma pessoa por chamada. Não implementar ações em lote implicitamente.
+Usuário confirmou a opção Ambos, implementada com seleção explícita, chamadas independentes e tratamento de sucesso parcial. O contrato continua suportando apenas uma pessoa por chamada.
 
-Framer Motion continua na penúltima etapa, Docker/Compose na última. Esta entrega é apenas documentação de planejamento.
+Framer Motion continua na penúltima etapa, Docker/Compose na última. A execução completa está registrada em 17-execucao.md.

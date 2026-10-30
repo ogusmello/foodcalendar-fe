@@ -1,7 +1,7 @@
 # Clonagem de períodos
 
 ## Status e objetivo
-Planejamento futuro para reaproveitar planos existentes. A operação disponível é POST /v1/meal-plans/clone; não corresponde a copiar qualquer recorte visível de um calendário.
+Implementado para reaproveitar planos existentes. A operação disponível é POST /v1/meal-plans/clone; não corresponde a copiar qualquer recorte visível de um calendário.
 
 ## Entrada proposta
 Menu de ações do calendário → Copiar período. Modal com escolha de pessoa, origem real, destino e prévia antes de confirmar.
@@ -31,7 +31,7 @@ Os dois intervalos devem respeitar início <= fim. Não exigir duração de sete
 - Informar quando os dias selecionados da origem não tiverem ocorrência no destino.
 - Origem permanece intacta; cópias recebem novos IDs.
 - Não criar rótulos como substituir semana: a operação não substitui nem remove planos.
-- Primeira entrega proposta para uma pessoa por envio. Copiar para as duas pessoas exigiria chamadas independentes e tratamento de sucesso parcial; fica fora da primeira entrega até confirmação.
+- Opção Ambos confirmada e implementada com chamadas independentes e tratamento de sucesso parcial, sem repetir as operações concluídas.
 
 ## Integração e erros
 POST interno /api/meal-plans/clone encaminha o payload. Sucesso 201 sem corpo: não executar response.json() obrigatoriamente; reconsultar o destino para apresentar as cópias.
@@ -49,3 +49,5 @@ Persistir cópias com novos IDs, preservando refeição, pessoa, tipo e targetDa
 Atualizar calendário, TopNav e sugestões do dia. Oferecer Ver período copiado preservando a visão escolhida.
 
 Testar datas exatas versus sobreposição, durações diferentes, preservação dos dias, 400/404/409, sucesso sem JSON e ausência de alteração nos registros de origem.
+## Executado — decisão confirmada
+Clonagem implementada com vigências exatas, seleção explícita de pessoas/Ambos, prévia, aviso de dias sem ocorrência, sucesso sem corpo e tratamento de 400/404/409. A opção Ambos substitui a proposta inicial de uma pessoa por envio. Resultados parciais são identificados; operações concluídas não são reenviadas.
