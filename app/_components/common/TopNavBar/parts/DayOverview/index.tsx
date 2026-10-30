@@ -49,6 +49,12 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
     element.scrollBy({ left: direction * Math.max(160, element.clientWidth * 0.8), behavior: reduceMotion ? "instant" : "smooth" });
   }
 
+  const edgeMask = bounds.start
+    ? bounds.end ? "" : "[mask-image:linear-gradient(to_right,#000_calc(100%_-_1.5rem),transparent)]"
+    : bounds.end
+      ? "[mask-image:linear-gradient(to_right,transparent,#000_1.5rem)]"
+      : "[mask-image:linear-gradient(to_right,transparent,#000_1.5rem,#000_calc(100%_-_1.5rem),transparent)]";
+
   const plans = data?.plans.filter((plan) => !userId || String(plan.user.id) === userId) ?? [];
   const items = slots.flatMap<MealPill>((slot) => {
     const matches = plans.filter((plan) => plan.mealType === slot.type);
@@ -65,7 +71,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
         id={viewportId}
         role="region"
         aria-label="Refeições do dia"
-        className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain rounded-full md:overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className={`min-w-0 flex-1 overflow-x-auto overscroll-x-contain rounded-full md:overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${edgeMask}`}
       >
         <ul ref={content} className="flex w-max min-w-full snap-x snap-proximity items-center gap-1.5">
           {items.map(({ slot, plan }) => {
