@@ -46,7 +46,7 @@ docker compose ps
 docker compose logs -f web
 ```
 
-PORT sets the public port (default: 3000). Inside a container, localhost refers to that container: use the external API URL or a hostname reachable from the container's network.
+PORT sets the host loopback port (default: 3000). Docker binds it to 127.0.0.1 only, so it is not exposed on the VPS public IP. Inside a container, localhost refers to that container: use the external API URL or a hostname reachable from the container's network.
 
 The image uses Node 24, a multistage build, Next.js standalone output, and an unprivileged user. The API URL can be configured at runtime without rebuilding. There is no Nginx, database, or application data volume. In API mode, persistence is the backend's responsibility. Demo changes are stored in .next/cache/yummy-demo-v1.json and may be lost when the container is recreated; they are never sent to the backend. MOCK_DATA_PATH can override this path for an explicitly managed demo store. Demo records are shared by visitors to the same instance. Old demo volumes are neither used nor automatically deleted.
 
@@ -103,7 +103,7 @@ Add these under Settings → Secrets and variables → Actions → Repository se
 | VPS_USER | SSH user with access to Docker and the deployment directory |
 | VPS_DEPLOY_PATH | Absolute path, for example /opt/yummy; no spaces or .. |
 | VPS_ARCH | amd64 or arm64; used by the publishing job |
-| APP_PORT | Public frontend port, for example 3000 |
+| APP_PORT | Host loopback port, normally 3000; must match the Caddy upstream |
 | API_BASE_URL | Optional backend HTTP/HTTPS URL reachable from the container, without /v1; omit or leave empty for demo data |
 | VPS_SSH_PRIVATE_KEY | Deployment user's private SSH key |
 | VPS_KNOWN_HOSTS | VPS known_hosts entry, with its fingerprint verified through a trusted channel |
@@ -122,7 +122,7 @@ For an SSH port other than 22, known_hosts must identify [host]:port. Do not dis
 
 Install Docker Engine, Compose v2, Bash, tar, and flock (util-linux). Provide enough disk space for at least the current and previous images. The deployment user must be able to run Docker without interaction and create or write files in the selected directory. Prepare that directory before the first deployment, granting the user the required permissions.
 
-The VPS must be able to access GHCR and the external backend. In API mode, the container must be able to reach API_BASE_URL. The workflow does not install Docker, create users, or change the firewall. Nginx is not included at this stage; public access, domain configuration, and HTTPS depend on your infrastructure.
+The VPS must be able to access GHCR and the external backend. In API mode, the container must be able to reach API_BASE_URL. The workflow does not install Docker, create users, or change the firewall. Caddy runs on the VPS and serves only yummy.dev.lagunatest.tech over HTTPS. Docker must remain bound to loopback. Public ports 80 and 443 reach Caddy; port 3000 must not be published on the public interface.
 
 ### First deployment and updates
 
@@ -165,3 +165,35 @@ pnpm test:docker
 ```
 
 The first command tests orchestration with an isolated substitute for the Docker command: download failures, startup failures, automatic recovery, manual rollback, backend warnings, and environment validation. The second builds the image and runs the production Compose configuration with Docker. These tests do not replace the first GitHub/VPS run, which requires your environment's Secrets and access.
+
+## Domain-only access
+
+The public application URL is **https://yummy.dev.lagunatest.tech**. The Compose files bind the application to 127.0.0.1, preventing direct access through the VPS public IP and application port. The Caddy site matches this exact hostname; do not add staging hostnames, wildcard sites, or a catch-all proxy to this application. Wildcard DNS records alone do not expose the application through Caddy.
+
+The reviewed Caddy configuration is in deploy/Caddyfile. Caddy runs separately on the host and is not installed or reconfigured by GitHub Actions. Apply it on the VPS:
+
+```sh
+sudo tee /etc/caddy/Caddyfile >/dev/null <<'EOF'
+yummy.dev.lagunatest.tech {
+    reverse_proxy 127.0.0.1:3000
+}
+EOF
+sudo caddy fmt --overwrite /etc/caddy/Caddyfile
+sudo caddy validate --config /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+```
+
+These commands replace the host Caddyfile; retain any unrelated sites if the VPS hosts other applications. APP_PORT must remain 3000 for this upstream, or both settings must be changed together.
+
+Push the updated Compose configuration and deploy its commit to apply loopback binding. Existing containers keep their previous binding until recreated. Older releases used a public port binding; rolling back to those releases can restore public access, so use only releases with loopback binding or patch their Compose configuration before rollback.
+
+Verify on the VPS:
+
+```sh
+cd /opt/yummy/current
+docker compose --project-name yummy --env-file .env -f compose.production.yaml port web 3000
+curl -I https://yummy.dev.lagunatest.tech
+curl -I -H 'Host: yummy.staging.lagunatest.tech' http://127.0.0.1
+```
+
+The port mapping must show 127.0.0.1:3000. The domain should respond successfully; staging must not serve the application. From another computer, http://187.41.106.24:3000 must fail to connect. Access by the VPS IP on HTTPS must not serve the application either. A hostname restricts routing, not user access: anyone who knows the public domain can visit it.
