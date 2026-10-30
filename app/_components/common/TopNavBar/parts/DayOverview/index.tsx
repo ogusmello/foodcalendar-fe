@@ -24,7 +24,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
   });
 
   return (
-    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-lg rounded-full bg-primary-muted/50 p-1">
+    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-2xl rounded-full bg-primary-muted/50 p-1">
       <div
         role="region"
         aria-label="Refeições do dia, role horizontalmente para explorar"
