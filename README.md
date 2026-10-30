@@ -1,6 +1,6 @@
 # Yummy!
 
-A personal meal planner for couples, built with Next.js App Router, React, TypeScript, Tailwind CSS, and Framer Motion. All data is read from and written to the external Food Calendar API. The application has no demo mode, fixtures, or local data persistence.
+A personal meal planner for couples, built with Next.js App Router, React, TypeScript, Tailwind CSS, and Framer Motion. When API_BASE_URL is configured, all data is read from and written to the external Food Calendar API. When it is missing or blank, the application automatically displays demo data, including in production.
 
 ## Setup
 
@@ -11,7 +11,7 @@ pnpm install --frozen-lockfile
 cp .env.example .env
 ```
 
-Configure the API URL in .env:
+Configure the API URL in .env to use real data, or leave API_BASE_URL empty to preview the application with demo data:
 
 ```dotenv
 API_BASE_URL=https://api.example.com
@@ -25,9 +25,9 @@ Use the base URL **without /v1**, a query string, or a fragment. The frontend ad
 pnpm dev
 ```
 
-Open http://localhost:3000. The browser calls the frontend's internal /api routes, and the Next.js server accesses the external API. API_BASE_URL is not a NEXT_PUBLIC variable and is not exposed to the browser. Missing configuration or an unavailable API produces an error; there is no fallback to sample data.
+Open http://localhost:3000. The browser calls the frontend's internal /api routes, and the Next.js server accesses the external API. API_BASE_URL is not a NEXT_PUBLIC variable and is not exposed to the browser. An absent or blank API_BASE_URL enables demo data and a visible demo notice. A configured URL hides that notice and uses only the external API. Invalid URLs or backend failures produce errors; they never trigger a fallback to demo data.
 
-Add people in Settings, create meals, and schedule them in the calendar. IDs are provided by the API; no users or meals are predefined. Creating or copying plans for both people sends one request per person and reports partial success.
+Add people in Settings, create meals, and schedule them in the calendar. In API mode, IDs are provided by the backend and no users or meals are predefined. Creating or copying plans for both people sends one request per person and reports partial success.
 
 ## API contract
 
@@ -37,7 +37,7 @@ The integration follows the supplied backend README. Validation against a live b
 
 ## Docker Compose
 
-Requires Docker Engine and Compose v2. Configure API_BASE_URL in .env before starting:
+Requires Docker Engine and Compose v2. Set API_BASE_URL in .env for real data, or leave it empty for a production demo:
 
 ```sh
 docker compose config --quiet
@@ -48,7 +48,7 @@ docker compose logs -f web
 
 PORT sets the public port (default: 3000). Inside a container, localhost refers to that container: use the external API URL or a hostname reachable from the container's network.
 
-The image uses Node 24, a multistage build, Next.js standalone output, and an unprivileged user. The API URL can be configured at runtime without rebuilding. There is no Nginx, database, or application data volume; persistence is the backend's responsibility. Old demo volumes are neither used nor automatically deleted.
+The image uses Node 24, a multistage build, Next.js standalone output, and an unprivileged user. The API URL can be configured at runtime without rebuilding. There is no Nginx, database, or application data volume. In API mode, persistence is the backend's responsibility. Demo changes are stored in .next/cache/yummy-demo-v1.json and may be lost when the container is recreated; they are never sent to the backend. MOCK_DATA_PATH can override this path for an explicitly managed demo store. Demo records are shared by visitors to the same instance. Old demo volumes are neither used nor automatically deleted.
 
 The /api/health healthcheck verifies that the frontend responds, independently of backend availability. Backend failures are displayed in data views and forms.
 
@@ -72,7 +72,7 @@ pnpm test
 pnpm test:docker
 ```
 
-pnpm test checks the external API transport, UI, and standalone runtime. Tests start an isolated HTTP server with contract responses, used only for testing. It is not part of the application and does not access your API or real data. These checks do not replace validation against a real backend.
+pnpm test checks the external API transport, automatic production demo mode, UI, and standalone runtime. Tests start an isolated HTTP server with contract responses, used only for testing. It is not part of the application and does not access your API or real data. These checks do not replace validation against a real backend.
 
 For UI tests, install Chromium and its dependencies:
 
@@ -104,7 +104,7 @@ Add these under Settings → Secrets and variables → Actions → Repository se
 | VPS_DEPLOY_PATH | Absolute path, for example /opt/yummy; no spaces or .. |
 | VPS_ARCH | amd64 or arm64; used by the publishing job |
 | APP_PORT | Public frontend port, for example 3000 |
-| API_BASE_URL | Backend HTTP/HTTPS URL reachable from the container, without /v1 |
+| API_BASE_URL | Optional backend HTTP/HTTPS URL reachable from the container, without /v1; omit or leave empty for demo data |
 | VPS_SSH_PRIVATE_KEY | Deployment user's private SSH key |
 | VPS_KNOWN_HOSTS | VPS known_hosts entry, with its fingerprint verified through a trusted channel |
 | GHCR_READ_USER | Username for reading private GHCR images |
@@ -114,7 +114,7 @@ Both GHCR_READ_* Secrets may be omitted only when the image is public. GitHub au
 
 Use **repository** Secrets, including VPS_ARCH, because publishing does not use the production environment. Deployment uses the production environment, where you can configure additional protections. Never commit credentials.
 
-API_BASE_URL must be a simple URL without embedded credentials, a query string, or a fragment. All connection and environment settings are configured through Secrets. The workflow generates the VPS .env with restricted permissions and transfers it over SSH; the file is neither committed nor included in the image. Changes to Secrets take effect on the next deployment.
+When provided, API_BASE_URL must be a simple URL without embedded credentials, a query string, or a fragment. All connection and environment settings are configured through Secrets. The workflow generates the VPS .env with restricted permissions and transfers it over SSH; the file is neither committed nor included in the image. Changes to Secrets take effect on the next deployment.
 
 For an SSH port other than 22, known_hosts must identify [host]:port. Do not disable SSH host key verification.
 
@@ -122,7 +122,7 @@ For an SSH port other than 22, known_hosts must identify [host]:port. Do not dis
 
 Install Docker Engine, Compose v2, Bash, tar, and flock (util-linux). Provide enough disk space for at least the current and previous images. The deployment user must be able to run Docker without interaction and create or write files in the selected directory. Prepare that directory before the first deployment, granting the user the required permissions.
 
-The VPS must be able to access GHCR and the external backend. The container must be able to reach API_BASE_URL. The workflow does not install Docker, create users, or change the firewall. Nginx is not included at this stage; public access, domain configuration, and HTTPS depend on your infrastructure.
+The VPS must be able to access GHCR and the external backend. In API mode, the container must be able to reach API_BASE_URL. The workflow does not install Docker, create users, or change the firewall. Nginx is not included at this stage; public access, domain configuration, and HTTPS depend on your infrastructure.
 
 ### First deployment and updates
 
@@ -133,7 +133,7 @@ The VPS must be able to access GHCR and the external backend. The container must
 
 Deployment downloads the image before changing the service and waits for the frontend to become healthy. If startup or HTTP verification fails, it attempts to restore the previous image and .env. On the first deployment, there is no previous release; a failure stops the new service and requires correction.
 
-Backend connectivity is checked separately. An unavailable backend produces an explicit warning and does not trigger automatic frontend rollback. Validation does not create or delete production data.
+The deployment summary identifies demo mode when API_BASE_URL is absent. In API mode, backend connectivity is checked separately. An unavailable backend produces an explicit warning and does not trigger automatic frontend rollback. Validation does not create or delete production data.
 
 Deployment replaces a single instance and may cause a brief interruption. Zero downtime is not guaranteed.
 
