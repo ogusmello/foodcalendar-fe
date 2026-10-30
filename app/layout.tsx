@@ -1,32 +1,44 @@
-import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import "./globals.css";
-import HeaderMenu from "./_components/common/HeaderMenu";
-import { NavSidebar } from "./_components/common/NavSidebar";
 
-const outfit = Outfit({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
+import type { Metadata } from "next";
+import { DM_Sans, Outfit } from "next/font/google";
+import { Sidebar } from "./_components/common/Sidebar";
+import { Wrapper } from "./_components/common/Wrapper";
+import { TopNavBar } from "./_components/common/TopNavBar";
+
+const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
+const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Food Calendar | Meal planning app",
-	description: "Meal planning app",
+  title: "Foodist | Planejamento alimentar",
+  description: "Planejamento alimentar para a rotina de vocês.",
 };
 
+const themeScript = `(() => {
+  let preference = "system";
+  try {
+    const stored = localStorage.getItem("foodist-theme");
+    if (stored === "light" || stored === "dark" || stored === "system") preference = stored;
+  } catch {}
+  const dark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  document.documentElement.dataset.themePreference = preference;
+})();`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
-	return (
-		<html
-			lang="en"
-			className={`${outfit.className} ${outfit.variable} h-full antialiased`}
-		>
-			<body className="min-h-full flex flex-col bg-sky-50 text-sky-700">
-				<HeaderMenu />
-				<div className="flex gap-4 w-full grow">
-					<NavSidebar />
-					{children}
-				</div>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="pt-BR" suppressHydrationWarning className={`${dmSans.variable} ${outfit.variable} h-full antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="flex min-h-dvh flex-col md:flex-row">
+        <Sidebar />
+        <Wrapper>
+          <TopNavBar />
+          <main className="mx-auto w-full max-w-content p-4 sm:p-6 lg:p-8">{children}</main>
+        </Wrapper>
+      </body>
+    </html>
+  );
 }
+
