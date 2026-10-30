@@ -13,7 +13,7 @@ export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
         return (
           <section key={category.type}>
             <h3 className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold uppercase leading-5 tracking-wide text-muted-foreground">
-              <MealTypeIcon type={category.type} size={14} aria-hidden="true" className="shrink-0" />
+              <MealTypeIcon type={category.type} size={18} aria-hidden="true" className="shrink-0" />
               {category.label}
             </h3>
             {meals.length ? (
@@ -26,7 +26,7 @@ export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
                       title={`${plan.meal.name} · ${plan.user.name}`}
                       className={`flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left ${category.color}`}
                     >
-                      <MealTypeIcon type={category.type} size={17} aria-hidden="true" className="shrink-0" />
+                      <MealTypeIcon type={category.type} size={20} aria-hidden="true" className="shrink-0" />
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="text-sm font-medium leading-5">{plan.meal.name}</span>
                         <span className="text-sm leading-5">{plan.user.name}</span>

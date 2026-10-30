@@ -33,7 +33,7 @@ export function MealFilters({ selected }: MealFiltersProps) {
         const active = selected.includes(category.type);
         return (
           <button key={category.type} type="button" aria-pressed={active} disabled={pending} onClick={() => update(category.type)} className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-medium disabled:cursor-wait ${category.color} ${active ? "border-current ring-2 ring-foreground ring-offset-2 ring-offset-surface" : "border-transparent hover:border-current/30"}`}>
-            <Icon size={12} aria-hidden="true" />
+            <Icon size={16} aria-hidden="true" />
             {category.label}
           </button>
         );
