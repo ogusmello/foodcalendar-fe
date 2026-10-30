@@ -35,10 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Sidebar />
         <Wrapper>
           <TopNavBar />
-          <main className="mx-auto w-full max-w-content p-4 sm:p-6 lg:p-8">{children}</main>
+          <main className="w-full min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         </Wrapper>
       </body>
     </html>
   );
 }
-
