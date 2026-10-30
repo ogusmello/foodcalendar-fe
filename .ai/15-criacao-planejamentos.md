@@ -63,3 +63,6 @@ Após salvar, atualizar calendário, painel do dia, TopNav e sugestões vazias d
 - Testar ocorrência única, dias úteis/fim de semana, limites inclusivos, dias sem ocorrência, virada de mês/ano, pessoa ausente e atualização das três visões.
 ## Executado — decisão confirmada
 Criação, edição e exclusão de planos implementadas. O usuário escolheu permitir Ambos: selecionar duas pessoas resulta em chamadas independentes, com sucesso parcial informado e repetição apenas das pendentes. Resultado incerto não é reenviado automaticamente. Essa decisão substitui a proposta inicial de uma pessoa por envio. Formulários e ações seguem o modal aprovado; transporte e mocks são persistentes e validados.
+
+## Resumo visual do formulário
+PlanSummary, em WorkflowForm/parts, apresenta refeição, tipo, nomes das pessoas, período com o dia da semana de cada extremidade e uma faixa dos sete dias com os selecionados destacados. Mostra quantidade por pessoa e total de refeições no calendário, sem confundir ocorrências com registros de plano. Informa dias sem ocorrência e seleção vazia. Contagens e dias foram verificados no Chromium: 30 datas úteis entre 30/10/2026 e 10/12/2026, 60 refeições para duas pessoas, além de ocorrência única.

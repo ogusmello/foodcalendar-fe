@@ -8,6 +8,7 @@ import { formatDate, parseDate, shiftDays, todayInSaoPaulo } from "@/lib/calenda
 import { mealCategories } from "@/lib/meals";
 import type { Meal, MealPlan, User } from "@/lib/api/types";
 import type { WorkflowFormProps } from "./types";
+import { PlanSummary } from "./parts/PlanSummary";
 
 const dayNames = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const dayValues = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
@@ -166,7 +167,7 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
           {(repeat || kind === "clone") && label("endDate", kind === "clone" ? "Fim do destino" : "Data final", <input id={id+"endDate"} type="date" className={inputClass} value={end} min={start} onChange={event => setEnd(event.target.value)} required />)}
         </div>
         {isPlan && repeat && <fieldset><legend className="mb-2 text-xs font-medium">Dias de repetição</legend><div className="mb-2 flex gap-2"><button type="button" className={secondary} onClick={() => setDays(dayValues.slice(0,5))}>Dias úteis</button><button type="button" className={secondary} onClick={() => setDays(dayValues.slice(5))}>Fim de semana</button><button type="button" className={secondary} onClick={() => setDays(dayValues)}>Todos</button></div><div className="flex flex-wrap gap-2">{dayValues.map((day,index) => <label key={day} className="flex items-center gap-1 text-xs"><input type="checkbox" checked={days.includes(day)} onChange={event => setDays(current => event.target.checked ? [...current,day] : current.filter(value=>value!==day))} />{dayNames[index]}</label>)}</div></fieldset>}
-        {isPlan && <p className="rounded-control bg-primary-muted p-3 text-xs text-primary-muted-foreground">{meals.find(meal => String(meal.id) === mealId)?.name ?? "Selecione uma refeição"}<br />{occurrences} ocorrência(s) por pessoa · {people.length} pessoa(s) · {mealCategories.find(category=>category.type===type)?.label}<br />{parseDate(start) ? formatDate(start) : "—"} – {parseDate(finalEnd) ? formatDate(finalEnd) : "—"}</p>}
+        {isPlan && <PlanSummary mealName={meals.find(meal => String(meal.id) === mealId)?.name} mealType={type} people={users.filter(user => people.includes(String(user.id))).map(user => user.name)} days={finalDays} startDate={start} endDate={finalEnd} repeating={repeat} occurrences={occurrences} />}
         {kind === "clone" && withoutOccurrence > 0 && <p className="text-xs text-warning">{withoutOccurrence} plano(s) não terão ocorrências nos dias do destino. A cópia mantém os dias da semana originais.</p>}
         {kind === "clone" && originPlans.length > 0 && <ul className="max-h-36 space-y-1 overflow-y-auto rounded-control bg-surface-muted p-3">{originPlans.map(item => <li key={item.id} className="text-xs">{item.user.name} · {item.meal.name} · {item.targetDays.map(day=>dayNames[dayValues.indexOf(day)]).join(", ")}</li>)}</ul>}
       </>}

@@ -31,6 +31,25 @@ try{
   await dialog.getByRole("button",{name:"Planejar esta refeição"}).click();
   dialog=page.getByRole("dialog",{name:"Adicionar ao calendário",exact:true});
   await dialog.getByRole("button",{name:"Ambos",exact:true}).click();
+  const originalDate=await dialog.getByLabel("Data inicial",{exact:true}).inputValue();
+  await dialog.getByLabel("Repetir em um período",{exact:true}).check();
+  await dialog.getByLabel("Data inicial",{exact:true}).fill("2026-10-30");
+  await dialog.getByLabel("Data final",{exact:true}).fill("2026-12-10");
+  await dialog.getByRole("button",{name:"Dias úteis",exact:true}).click();
+  const summary=dialog.getByRole("region",{name:"Resumo do planejamento",exact:true});
+  await summary.getByText("30 refeições por pessoa",{exact:true}).waitFor();
+  await summary.getByText("60 refeições no total",{exact:true}).waitFor();
+  await summary.getByText("Você e Seu par",{exact:true}).waitFor();
+  assert.equal(await summary.getByRole("listitem",{name:/: incluído$/}).count(),5);
+  fs.mkdirSync("test-results",{recursive:true});
+  await summary.screenshot({path:"test-results/plan-summary.png"});
+  for(const day of ["Seg","Ter","Qua","Qui","Sex"])await dialog.getByLabel(day,{exact:true}).uncheck();
+  await summary.getByText("Selecione ao menos um dia da semana.",{exact:true}).waitFor();
+  await dialog.getByRole("button",{name:"Dias úteis",exact:true}).click();
+  await dialog.getByLabel("Data inicial",{exact:true}).fill(originalDate);
+  await dialog.getByLabel("Repetir em um período",{exact:true}).uncheck();
+  await summary.getByText("1 refeição por pessoa",{exact:true}).waitFor();
+  assert.equal(await summary.getByRole("listitem",{name:/: incluído$/}).count(),1);
   let failSecondOnce=true;
   await page.route("**/api/meal-plans", async route => {
     const payload=route.request().postDataJSON();
