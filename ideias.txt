@@ -1,1 +1,0 @@
-- Criar uma barra na tela inicial que inicia um chatbot para registrar novas receitas/alimentos
