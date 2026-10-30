@@ -54,13 +54,13 @@
   --meal-dinner-foreground: #00382b;
   --meal-dessert: #c9c896;
   --meal-dessert-foreground: #00382b;
-  --scrollbar-thumb: #626c66;
-  --background: #090d0b;
-  --surface: #121b17;
-  --surface-muted: #1e2b24;
+  --scrollbar-thumb: #626262;
+  --background: #0b0b0b;
+  --surface: #171717;
+  --surface-muted: #242424;
   --foreground: #ffffff;
   --muted-foreground: #a7a7a7;
-  --border: #3c4841;
+  --border: #3b3b3b;
   --ring: #f6f4b8;
   --primary: #f6f4b8;
   --primary-hover: #e5e2a0;
@@ -75,7 +75,7 @@
   --warning: #f6f4b8;
   --warning-muted: #353724;
   --danger: #ffffff;
-  --danger-muted: #343a36;
+  --danger-muted: #343434;
   --info: #f6f4b8;
   --info-muted: #00382b;
   --elevation-card: 0 2px 12px rgb(0 0 0 / 0.2);
