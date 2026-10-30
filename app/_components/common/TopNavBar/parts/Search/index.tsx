@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { MealTrigger } from "../../../MealTrigger";
 import { lockPageScroll } from "@/lib/scroll-lock";
+import { trapDialogFocus } from "@/lib/dialog";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -119,6 +120,8 @@ export function Search({ date, userId }: SearchProps) {
           if (event.target === event.currentTarget && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) close();
         }}
         onKeyDown={(event) => {
+          trapDialogFocus(event);
+          if (event.defaultPrevented) return;
           if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
           const links = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("[data-search-result]"));
           if (!links.length) return;

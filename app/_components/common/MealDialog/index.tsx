@@ -7,6 +7,7 @@ import { ForkKnifeIcon, PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { mealCategories } from "@/lib/meals";
 import { formatDate } from "@/lib/calendar";
 import { lockPageScroll } from "@/lib/scroll-lock";
+import { trapDialogFocus } from "@/lib/dialog";
 import { useWorkflow } from "../Workflow";
 import { MealForm } from "./parts/MealForm";
 import type { MealDialogContextValue, MealDialogProps, MealSelection } from "./types";
@@ -56,7 +57,7 @@ export function MealDialogProvider({ children }: MealDialogProps) {
     setSelection({ meal, context });
   } }}>
     {children}
-    <motion.dialog initial={false} animate={{ opacity: selection !== null ? 1 : 0, y: selection !== null ? 0 : 6 }} ref={dialog} aria-labelledby="meal-dialog-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => {
+    <motion.dialog onKeyDown={trapDialogFocus} initial={false} animate={{ opacity: selection !== null ? 1 : 0, y: selection !== null ? 0 : 6 }} ref={dialog} aria-labelledby="meal-dialog-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => {
       setSelection(null);
       setEditing(false);
       opener.current?.focus();

@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { XIcon } from "@phosphor-icons/react";
 import { lockPageScroll } from "@/lib/scroll-lock";
+import { trapDialogFocus } from "@/lib/dialog";
 import { WorkflowForm } from "./parts/WorkflowForm";
 import type { WorkflowContextValue, WorkflowProviderProps, WorkflowRequest, WorkflowTriggerProps } from "./types";
 
@@ -42,7 +43,7 @@ export function WorkflowProvider({ children }: WorkflowProviderProps) {
     setRequest(value);
   } }}>
     {children}
-    <motion.dialog initial={false} animate={{ opacity: opened ? 1 : 0, y: opened ? 0 : 6 }} ref={dialog} aria-labelledby="workflow-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => { setRequest(null); opener.current?.focus(); }} onClick={event => {
+    <motion.dialog onKeyDown={trapDialogFocus} initial={false} animate={{ opacity: opened ? 1 : 0, y: opened ? 0 : 6 }} ref={dialog} aria-labelledby="workflow-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => { setRequest(null); opener.current?.focus(); }} onClick={event => {
       const rect = event.currentTarget.getBoundingClientRect();
       if (event.target === event.currentTarget && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) close();
     }} className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-xl overflow-y-auto rounded-panel border border-border bg-surface p-0 text-foreground shadow-popover backdrop:bg-foreground/30 backdrop:backdrop-blur-md">
