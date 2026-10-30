@@ -90,7 +90,7 @@ Each component has its own folder containing index.tsx, types.tsx, and a parts/ 
 
 The **CI** workflow checks pull requests and pushes to main. After the tests pass, a push to main publishes an image to ghcr.io/ogusmello/foodcalendar-fe, tagged with the full commit SHA. Actions are pinned by SHA; only the publishing job receives registry write permission.
 
-The **Deploy** workflow runs manually and accepts only commits on main with a successful CI and publication run. The image reference is resolved to a digest before deployment. On the VPS, compose.production.yaml pulls the built image without building or checking out the project.
+The **Deploy** workflow starts automatically after a successful CI run triggered by a push to main. Failed CI runs, pull requests, and runs from other repositories cannot trigger deployment. Manual deployment and rollback remain available. Both paths accept only commits on main with a successful CI and publication run. The image reference is resolved to a digest before deployment. On the VPS, compose.production.yaml pulls the built image without building or checking out the project.
 
 ### GitHub Secrets
 
@@ -128,8 +128,10 @@ The VPS must be able to access GHCR and the external backend. In API mode, the c
 
 1. Configure the Secrets and prepare the VPS.
 2. Push the workflows to main and wait for CI, including image publication, to complete successfully.
-3. Under Actions → Deploy → Run workflow, select the main branch, set action=deploy, and enter the full SHA of the approved commit.
+3. After CI succeeds, the Deploy workflow starts automatically for that commit.
 4. Review the result and any warnings in the workflow summary.
+
+To redeploy manually, use Actions → Deploy → Run workflow on main, select action=deploy, and enter the full SHA of an approved commit. Automatic deployment refuses a commit superseded by a newer main commit; the newer commit must pass CI before it can be deployed. If the production environment requires approval, the job waits for that approval.
 
 Deployment downloads the image before changing the service and waits for the frontend to become healthy. If startup or HTTP verification fails, it attempts to restore the previous image and .env. On the first deployment, there is no previous release; a failure stops the new service and requires correction.
 
