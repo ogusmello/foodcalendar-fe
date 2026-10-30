@@ -214,6 +214,14 @@ try{
   await page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"}).getByRole("link",{name:/sexta-feira, 30 de outubro/}).click();
   await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("mealTypes")==="LUNCH");
   await page.locator('[aria-label="Calendário diário"]').waitFor();
+  await page.goto(base+"/?view=day&date=2026-10-03&userId=2");
+  const viewPicker=page.getByRole("navigation",{name:"Visão do calendário"});
+  await viewPicker.getByRole("link",{name:"Dia",exact:true}).waitFor();
+  await page.getByRole("navigation",{name:"Período do calendário"}).getByText("03/10/2026",{exact:true}).waitFor();
+  await viewPicker.getByRole("link",{name:"Semana",exact:true}).click();
+  await page.waitForURL(url=>url.searchParams.get("view")==="week");
+  await viewPicker.getByRole("link",{name:"Dia",exact:true}).click();
+  await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("date")==="2026-10-03" && url.searchParams.get("userId")==="2");
   assert.deepEqual(errors,[],"No browser exceptions");
   console.log("PASS: browser creation, Ambos, plan editing, search-to-meal modal, meal editing, cloning, profile creation, themes and mobile navigation.");
 }catch(error){ if(page){fs.mkdirSync("test-results",{recursive:true});await page.screenshot({path:"test-results/failure.png",fullPage:true});}throw error;

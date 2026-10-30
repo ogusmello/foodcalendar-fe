@@ -43,3 +43,6 @@ Clicar na data de Mês ou Semana abre a visão diária daquela data, preservando
 As antigas tags de legenda são controles de filtro: uma ou mais categorias podem ser selecionadas, e Todos limpa a seleção. O filtro é aplicado aos eventos, totais, grupos e painel de detalhes da visão ativa. mealTypes na URL preserva o contexto ao navegar entre datas, pessoas e visões. Valores desconhecidos são ignorados; o parâmetro singular mealType continua aceito como compatibilidade. A interação usa o router do Next sem recarregar o documento e sem deslocar a página ao filtrar. Estados selecionados expostos por aria-pressed.
 
 Chromium validou seleção simples/múltipla, limpeza, as três visões, preservação de data/pessoa e abertura do dia com o filtro ativo. Lint, build e tipos aprovados.
+
+## Rótulo da visão diária
+O seletor usa Dia, Semana e Mês. Alternar visões preserva a data escolhida; não retorna automaticamente ao dia atual. Entre as setas é exibida a data selecionada no formato DD/MM/AAAA, substituindo o antigo atalho Hoje. Chromium verificou 03/10/2026 e a alternância Semana → Dia preservando data e pessoa.

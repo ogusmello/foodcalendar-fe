@@ -55,11 +55,11 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
         {[{ id: "", name: "Ambos" }, ...users.map(user => ({ id: String(user.id), name: user.name }))].map(user => <Link key={user.id} href={href(date, user.id || null)} aria-current={(person ?? "") === user.id ? "page" : undefined} className={`rounded-full px-4 py-2 text-sm ${(person ?? "") === user.id ? "bg-primary text-primary-foreground" : "bg-surface text-muted-foreground"}`}>{user.name}</Link>)}
       </nav>
       <nav aria-label="Visão do calendário" className="flex items-center gap-1 rounded-full border border-border bg-surface p-1">
-        {[{ value: "day", label: "Hoje" }, { value: "week", label: "Semana" }, { value: "month", label: "Mês" }].map(option => <Link key={option.value} href={href(option.value === "day" ? today : date, person, option.value)} aria-current={view === option.value ? "page" : undefined} className={`rounded-full px-4 py-1.5 text-sm ${view === option.value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-surface-muted"}`}>{option.label}</Link>)}
+        {[{ value: "day", label: "Dia" }, { value: "week", label: "Semana" }, { value: "month", label: "Mês" }].map(option => <Link key={option.value} href={href(date, person, option.value)} aria-current={view === option.value ? "page" : undefined} className={`rounded-full px-4 py-1.5 text-sm ${view === option.value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-surface-muted"}`}>{option.label}</Link>)}
       </nav>
       <nav aria-label="Período do calendário" className="flex items-center gap-2">
         <Link href={href(previous)} aria-label={view === "month" ? "Mês anterior" : view === "week" ? "Semana anterior" : "Dia anterior"} className="rounded-control border border-border bg-surface px-3 py-2">←</Link>
-        <Link href={href(today)} className="rounded-control px-3 py-2 text-sm font-medium text-primary">Hoje</Link>
+        <time dateTime={date} className="px-3 py-2 text-sm font-medium tabular-nums text-foreground">{formatDate(date, { day: "2-digit", month: "2-digit", year: "numeric" })}</time>
         <Link href={href(next)} aria-label={view === "month" ? "Próximo mês" : view === "week" ? "Próxima semana" : "Próximo dia"} className="rounded-control border border-border bg-surface px-3 py-2">→</Link>
       </nav>
     </div>
