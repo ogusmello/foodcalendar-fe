@@ -48,7 +48,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
             return (
               <li key={`${slot.type}-${plan?.id ?? "empty"}`} className="shrink-0 snap-start">
                 <Link
-                  href={`/calendario?${params}`}
+                  href={`/?${params}`}
                   title={`${slot.label}: ${subtitle}${plan ? ` · ${plan.user.name}` : ""}`}
                   className={`m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-current/10 px-3 py-1 hover:border-current/40 focus-visible:-outline-offset-2 ${slot.color}`}
                 >

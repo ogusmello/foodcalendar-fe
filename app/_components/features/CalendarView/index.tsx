@@ -29,7 +29,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
   function href(day: string, userId = person, nextView: string = view) {
     const query = new URLSearchParams({ date: day, view: nextView });
     if (userId) query.set("userId", userId);
-    return `/calendario?${query}`;
+    return `/?${query}`;
   }
   function occurrences(day: string) {
     const weekday = weekdays[parseDate(day)!.getDay()];
@@ -81,7 +81,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
           const meals = selectedPlans.filter(plan => plan.mealType === item.type);
           return <section key={item.type}><h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{item.label}</h3>{meals.length ? <ul className="space-y-2">{meals.map(plan => <li key={plan.id}><Link href={`/refeicoes?mealId=${plan.meal.id}`} className={`block rounded-control px-3 py-2.5 ${item.color}`}><span className="block text-xs font-medium">{plan.meal.name}</span><span className="text-[10px]">{plan.user.name}</span></Link></li>)}</ul> : <p className="text-xs text-muted-foreground">{incomplete ? "Dados incompletos" : "Sem refeição planejada"}</p>}</section>;
         })}</div>
-        <Link href={`/?date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver planejamento da semana →</Link>
+        <Link href={`/?view=week&date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}
     </div>
   </div>;

@@ -1,7 +1,7 @@
 # Calendário mensal
 
 ## Implementado
-- Nova rota /calendario acessível pela Sidebar.
+- Calendário na Home (/), acessível pela Sidebar.
 - Grade mensal com sete colunas, de segunda a domingo; mostra dias dos meses adjacentes para completar as semanas.
 - Navegação entre meses, botão Hoje, indicação do dia atual e seleção de uma data pela URL.
 - Visão Ambos por padrão e filtros individuais preservados ao trocar mês ou dia.
@@ -19,7 +19,7 @@ CalendarView/index.tsx e types.tsx, com parts/DayCell/index.tsx e types.tsx. Cat
 ## Validação
 Lint, TypeScript e build aprovados. Verificação temporária cobriu início/fim de mês e ano, fevereiro bissexto, semanas iniciando na segunda, data inválida e renderização HTTP da rota com dados mockados, visão conjunta e filtro individual. Revisão visual em navegador não executada nesta etapa.
 ## Visões Hoje, Semana e Mês
-- Seletor de visão na rota /calendario, persistido na URL por view=day|week|month. Sem parâmetro ou com valor inválido, mantém Mês.
+- Seletor de visão na Home (/), persistido na URL por view=day|week|month. Sem parâmetro ou com valor inválido, mantém Mês.
 - Hoje abre o dia atual; visão diária detalha as refeições dos dois por tipo, incluindo descrição e pessoa.
 - Semana apresenta segunda a domingo, com dias nas colunas e tipos de refeição nas linhas, exibindo todos os eventos e nomes das pessoas.
 - Mês mantém a grade e o painel de detalhes do dia selecionado.
@@ -28,3 +28,6 @@ Lint, TypeScript e build aprovados. Verificação temporária cobriu início/fim
 - Consultas usam somente o intervalo necessário da visão e expandem as recorrências conforme vigência e dias da semana.
 - Microcomponente Schedule em parts/ com tipos separados, responsável pelas apresentações diária e semanal.
 - Validação: lint, TypeScript, build e verificações HTTP das três visões, filtros individuais, fallback de visão inválida e limites de datas aprovados.
+
+## Calendário como página inicial
+O calendário substitui o planejamento anterior na rota /. Sidebar, busca de datas, TopNav e links internos apontam para a Home. /calendario redireciona para / preservando query parameters de data, pessoa e visão. A antiga implementação Planning foi removida por não ser mais utilizada. Verificações de lint, build, tipos, renderização das três visões na Home e preservação de parâmetros no redirecionamento aprovadas.

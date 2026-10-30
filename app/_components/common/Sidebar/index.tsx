@@ -4,13 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { CalendarBlankIcon, SquaresFourIcon, ForkKnifeIcon, GearIcon, ListIcon, SidebarIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, ForkKnifeIcon, GearIcon, ListIcon, SidebarIcon, XIcon } from "@phosphor-icons/react";
 import { NavItem } from "./parts/NavItem";
 import type { SidebarItem } from "./types";
 
 const mainItems: SidebarItem[] = [
-  { href: "/", label: "Planejamento", icon: SquaresFourIcon },
-  { href: "/calendario", label: "Calendário", icon: CalendarBlankIcon },
+  { href: "/", label: "Calendário", icon: CalendarBlankIcon },
   { href: "/refeicoes", label: "Refeições", icon: ForkKnifeIcon },
 ];
 const settingsItem: SidebarItem = {
@@ -30,7 +29,7 @@ export function Sidebar() {
   return (
     <aside className={`flex shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
       <header className={`flex min-h-topbar items-center gap-2 px-4 ${collapsed ? "md:flex-col md:justify-center md:gap-3 md:py-4" : "justify-between"}`}>
-        <Link href="/" aria-label="Foodist — Planejamento" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-control">
+        <Link href="/" aria-label="Foodist — Calendário" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-control">
           <Image alt="" src="/foodist_mark_2.svg" width={24} height={24} priority className="h-6 w-6 shrink-0" />
           <span className={`font-brand text-lg font-semibold ${collapsed ? "md:hidden" : ""}`}>Foodist</span>
         </Link>
