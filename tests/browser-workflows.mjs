@@ -121,6 +121,14 @@ try{
   await page.getByRole("button",{name:"Adicionar ao calendário",exact:true}).waitFor();
   await page.screenshot({path:"test-results/calendar-mobile-dark.png",fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false,"No horizontal page overflow on mobile");
+  await page.emulateMedia({reducedMotion:"reduce"});
+  await page.getByRole("button",{name:"Adicionar ao calendário",exact:true}).click();
+  dialog=page.getByRole("dialog",{name:"Adicionar ao calendário",exact:true});
+  await dialog.waitFor();
+  await page.keyboard.press("Escape");
+  await dialog.waitFor({state:"hidden"});
+  await page.getByRole("button",{name:"Abrir menu",exact:true}).click();
+  await page.getByRole("button",{name:"Fechar menu",exact:true}).click();
   assert.deepEqual(errors,[],"No browser exceptions");
   console.log("PASS: browser creation, Ambos, plan editing, search-to-meal modal, meal editing, cloning, profile creation, themes and mobile navigation.");
 }catch(error){ if(page){fs.mkdirSync("test-results",{recursive:true});await page.screenshot({path:"test-results/failure.png",fullPage:true});}throw error;

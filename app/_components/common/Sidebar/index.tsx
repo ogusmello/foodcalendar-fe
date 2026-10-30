@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -27,7 +28,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className={`flex shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
+    <motion.aside layout initial={false} className={`flex shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
       <header className={`flex min-h-topbar items-center gap-2 px-4 ${collapsed ? "md:flex-col md:justify-center md:gap-3 md:py-4" : "justify-between"}`}>
         <Link href="/" aria-label="Foodist — Calendário" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-control">
           <Image alt="" src="/foodist_mark_2.svg" width={24} height={24} priority className="h-6 w-6 shrink-0" />
@@ -73,6 +74,6 @@ export function Sidebar() {
           <NavItem item={settingsItem} active={isActive(settingsItem.href)} collapsed={collapsed} onNavigate={() => setMobileOpen(false)} />
         </div>
       </nav>
-    </aside>
+    </motion.aside>
   );
 }

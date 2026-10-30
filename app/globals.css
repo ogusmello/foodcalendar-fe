@@ -120,7 +120,7 @@
   --shadow-popover: var(--elevation-popover);
 }
 
-@theme {
+@theme static {
   --radius-control: 0.75rem;
   --radius-card: 1.25rem;
   --radius-panel: 1.75rem;

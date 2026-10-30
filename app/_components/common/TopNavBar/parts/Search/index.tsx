@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 import { MealTrigger } from "../../../MealTrigger";
 import { lockPageScroll } from "@/lib/scroll-lock";
 
@@ -108,7 +109,7 @@ export function Search({ date, userId }: SearchProps) {
         <span className="flex-1 truncate">Buscar refeições e datas</span>
         <kbd className="hidden rounded border border-border px-1.5 py-0.5 text-[10px] sm:block">⌘ / Ctrl K</kbd>
       </button>
-      <dialog
+      <motion.dialog initial={false} animate={{ opacity: open ? 1 : 0, y: open ? 0 : 6 }}
         id="global-search"
         ref={dialog}
         aria-labelledby="search-heading"
@@ -168,7 +169,7 @@ export function Search({ date, userId }: SearchProps) {
           </section>
         </div>
         <footer className="flex items-center justify-between gap-3 border-t border-border px-5 py-3 text-xs text-muted-foreground"><span>↑ ↓ para navegar · Enter para abrir</span><span>Esc para fechar</span></footer>
-      </dialog>
+      </motion.dialog>
     </>
   );
 }

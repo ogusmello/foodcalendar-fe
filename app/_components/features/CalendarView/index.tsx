@@ -1,3 +1,4 @@
+import { AnimatedSurface } from "../../common/AnimatedSurface";
 import { WorkflowTrigger } from "../../common/Workflow";
 import { MealTrigger } from "../../common/MealTrigger";
 import Link from "next/link";
@@ -60,7 +61,7 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
     </div>
     {incomplete && <p role="status" className="text-sm text-warning">Parte dos dados está indisponível. Os dias podem estar incompletos.</p>}
     {targets.length === 0 && <p role="status" className="text-sm text-muted-foreground">Nenhuma pessoa encontrada para este filtro.</p>}
-    <div className={`grid items-start gap-bento ${view === "month" ? "2xl:grid-cols-[minmax(0,1fr)_20rem]" : ""}`}>
+    <AnimatedSurface identity={`${view}:${date}:${person ?? "both"}`} className={`grid items-start gap-bento ${view === "month" ? "2xl:grid-cols-[minmax(0,1fr)_20rem]" : ""}`}>
       <section aria-labelledby="month-heading" className="min-w-0 overflow-hidden rounded-card border border-border bg-surface shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
           <h2 id="month-heading" className="text-lg font-semibold capitalize">{title}</h2>
@@ -86,6 +87,6 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
         })}</div>
         <Link href={`/?view=week&date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}
-    </div>
+    </AnimatedSurface>
   </div>;
 }

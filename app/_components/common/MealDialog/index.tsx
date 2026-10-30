@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -55,7 +56,7 @@ export function MealDialogProvider({ children }: MealDialogProps) {
     setSelection({ meal, context });
   } }}>
     {children}
-    <dialog ref={dialog} aria-labelledby="meal-dialog-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => {
+    <motion.dialog initial={false} animate={{ opacity: selection !== null ? 1 : 0, y: selection !== null ? 0 : 6 }} ref={dialog} aria-labelledby="meal-dialog-title" onCancel={event => { if (busy) event.preventDefault(); }} onClose={() => {
       setSelection(null);
       setEditing(false);
       opener.current?.focus();
@@ -93,6 +94,6 @@ export function MealDialogProvider({ children }: MealDialogProps) {
           </div>
         </>}
       </div>}
-    </dialog>
+    </motion.dialog>
   </MealDialogContext.Provider>;
 }
