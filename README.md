@@ -1,17 +1,17 @@
 # Yummy!
 
-Planejamento alimentar pessoal para o casal, com Next.js App Router, React, TypeScript, Tailwind CSS e Framer Motion. Todos os dados são lidos e gravados na Food Calendar API externa. Não há modo demonstração, fixtures ou persistência local na aplicação.
+A personal meal planner for couples, built with Next.js App Router, React, TypeScript, Tailwind CSS, and Framer Motion. All data is read from and written to the external Food Calendar API. The application has no demo mode, fixtures, or local data persistence.
 
-## Configuração
+## Setup
 
-Requer Node.js 24 e pnpm 12.11.2.
+Requires Node.js 24 and pnpm 12.11.2.
 
 ```sh
 pnpm install --frozen-lockfile
 cp .env.example .env
 ```
 
-Configure a URL da API no arquivo .env:
+Configure the API URL in .env:
 
 ```dotenv
 API_BASE_URL=https://api.example.com
@@ -19,25 +19,25 @@ PORT=3000
 FOODIST_TAG=local
 ```
 
-Use a URL base **sem /v1**, sem query string ou fragmento. O frontend acrescenta /v1 aos recursos. HTTP e HTTPS são aceitos. Reinicie o servidor após alterar o ambiente. Se existir .env.local, ele tem prioridade no Next.js: atualize ou remova valores conflitantes nesse arquivo. O Compose lê .env, não .env.local.
+Use the base URL **without /v1**, a query string, or a fragment. The frontend adds /v1 to resource paths. Both HTTP and HTTPS are supported. Restart the server after changing environment settings. If .env.local exists, Next.js gives it priority: update or remove conflicting values in that file. Compose reads .env, not .env.local.
 
 ```sh
 pnpm dev
 ```
 
-Acesse http://localhost:3000. O navegador chama as rotas internas /api do frontend; o servidor Next acessa a API externa. API_BASE_URL não é NEXT_PUBLIC e não é exposta ao navegador. Sem configuração válida ou com a API indisponível, as consultas retornam erro; não há fallback para dados fictícios.
+Open http://localhost:3000. The browser calls the frontend's internal /api routes, and the Next.js server accesses the external API. API_BASE_URL is not a NEXT_PUBLIC variable and is not exposed to the browser. Missing configuration or an unavailable API produces an error; there is no fallback to sample data.
 
-Crie as pessoas em Configurações, cadastre refeições e adicione planejamentos ao calendário. A API fornece os IDs: não há usuários ou refeições predefinidos. Criar ou copiar para Ambos usa uma chamada por pessoa e informa sucesso parcial.
+Add people in Settings, create meals, and schedule them in the calendar. IDs are provided by the API; no users or meals are predefined. Creating or copying plans for both people sends one request per person and reports partial success.
 
-## Contrato da API
+## API contract
 
-JSON e recursos /v1/users, /v1/meals e /v1/meal-plans. O backend pertence a outro repositório. Datas são civis (YYYY-MM-DD), sem horários. Tipos de refeição: BREAKFAST, LUNCH, SNACK, DINNER e DESSERT. O contrato atual não oferece login, nutrientes ou ingredientes estruturados.
+The API uses JSON and exposes /v1/users, /v1/meals, and /v1/meal-plans. The backend lives in a separate repository. Dates are calendar dates (YYYY-MM-DD), without times. Meal types are BREAKFAST, LUNCH, SNACK, DINNER, and DESSERT. The current contract does not provide authentication, nutrients, or structured ingredients.
 
-A integração foi construída conforme o README do backend fornecido. A validação com uma instância real ainda depende do ambiente externo estar disponível.
+The integration follows the supplied backend README. Validation against a live backend still requires an available external environment.
 
 ## Docker Compose
 
-Requer Docker Engine e Compose v2. Configure API_BASE_URL no .env antes de subir:
+Requires Docker Engine and Compose v2. Configure API_BASE_URL in .env before starting:
 
 ```sh
 docker compose config --quiet
@@ -46,23 +46,23 @@ docker compose ps
 docker compose logs -f web
 ```
 
-A porta pública é definida por PORT (padrão 3000). Dentro do container, localhost aponta para o próprio container: use a URL externa da API ou um hostname alcançável pela rede do container.
+PORT sets the public port (default: 3000). Inside a container, localhost refers to that container: use the external API URL or a hostname reachable from the container's network.
 
-A imagem usa Node 24, build em múltiplos estágios, saída standalone do Next.js e usuário sem privilégios. A URL da API é configurável em runtime, sem rebuild. Sem Nginx, banco ou volume de dados: a persistência é responsabilidade do backend. Volumes antigos da demonstração não são usados nem apagados automaticamente.
+The image uses Node 24, a multistage build, Next.js standalone output, and an unprivileged user. The API URL can be configured at runtime without rebuilding. There is no Nginx, database, or application data volume; persistence is the backend's responsibility. Old demo volumes are neither used nor automatically deleted.
 
-O healthcheck /api/health verifica que o frontend está respondendo, independentemente da disponibilidade do backend. Falhas do backend são apresentadas nas consultas e formulários.
+The /api/health healthcheck verifies that the frontend responds, independently of backend availability. Backend failures are displayed in data views and forms.
 
-Arquivos .env privados, .ai/, testes e dependências locais ficam fora do contexto de build. Fontes de next/font podem exigir internet durante o build.
+Private .env files, .ai/, tests, and local dependencies are excluded from the build context. Fonts loaded through next/font may require internet access during the build.
 
-### Atualização
+### Updates
 
 ```sh
 docker compose up -d --build
 ```
 
-FOODIST_TAG identifica a imagem (nome interno mantido por compatibilidade). Para retornar a uma imagem já construída, use FOODIST_TAG=v1 docker compose up -d --no-build. Para parar, docker compose down.
+FOODIST_TAG identifies the image; this internal name is retained for compatibility. To return to an existing image, use FOODIST_TAG=v1 docker compose up -d --no-build. To stop the service, run docker compose down.
 
-## Verificações
+## Checks
 
 ```sh
 pnpm lint
@@ -72,95 +72,96 @@ pnpm test
 pnpm test:docker
 ```
 
-pnpm test executa verificações do transporte externo, interface e runtime standalone. Os testes iniciam um servidor HTTP isolado com respostas de contrato, exclusivo dos testes; ele não faz parte da aplicação e não acessa sua API ou dados reais. Não equivalem à validação de um backend real.
+pnpm test checks the external API transport, UI, and standalone runtime. Tests start an isolated HTTP server with contract responses, used only for testing. It is not part of the application and does not access your API or real data. These checks do not replace validation against a real backend.
 
-Para os testes de interface:
+For UI tests, install Chromium and its dependencies:
 
 ```sh
 pnpm exec playwright install --with-deps chromium
 ```
 
-pnpm test:docker constrói uma imagem isolada e verifica saúde, usuário, arquivos estáticos e comportamento sem backend. Remove somente os recursos que cria.
+pnpm test:docker builds an isolated image and checks health, the runtime user, static assets, and behavior without an available backend. It removes only the resources it creates.
 
-## Organização
+## Project structure
 
-Componentes em pastas com index.tsx, types.tsx e parts/ para partes exclusivas. Tailwind e tokens em app/globals.css. Camada de dados em lib/api; calendário em app/_components/features/CalendarView.
+Each component has its own folder containing index.tsx, types.tsx, and a parts/ directory for internal components. Tailwind styles and tokens live in app/globals.css. The data layer lives in lib/api, and the calendar lives in app/_components/features/CalendarView.
 
-## Deploy pelo GitHub Actions
+## Deployment with GitHub Actions
 
-O workflow **CI** verifica PRs e pushes na main. Após os testes, um push na main publica a imagem em ghcr.io/ogusmello/foodcalendar-fe com a tag do SHA completo do commit. Actions são fixadas por SHA; apenas o job de publicação recebe permissão de escrita no registry.
+The **CI** workflow checks pull requests and pushes to main. After the tests pass, a push to main publishes an image to ghcr.io/ogusmello/foodcalendar-fe, tagged with the full commit SHA. Actions are pinned by SHA; only the publishing job receives registry write permission.
 
-O workflow **Deploy** é manual e aceita somente commits da main com CI/publicação concluídos com sucesso. A referência é resolvida para um digest antes da implantação. Na VPS, compose.production.yaml baixa a imagem pronta, sem build e sem checkout do projeto.
+The **Deploy** workflow runs manually and accepts only commits on main with a successful CI and publication run. The image reference is resolved to a digest before deployment. On the VPS, compose.production.yaml pulls the built image without building or checking out the project.
 
 ### GitHub Secrets
 
-Cadastre em Settings → Secrets and variables → Actions → Repository secrets:
+Add these under Settings → Secrets and variables → Actions → Repository secrets:
 
-| Secret | Valor |
+| Secret | Value |
 | --- | --- |
-| VPS_HOST | Hostname ou IPv4 da VPS |
-| VPS_PORT | Porta SSH, por exemplo 22 |
-| VPS_USER | Usuário SSH com acesso ao Docker e ao diretório de deploy |
-| VPS_DEPLOY_PATH | Caminho absoluto, por exemplo /opt/yummy; sem espaços ou .. |
-| VPS_ARCH | amd64 ou arm64; utilizado pelo job de publicação |
-| APP_PORT | Porta pública do frontend, por exemplo 3000 |
-| API_BASE_URL | URL HTTP/HTTPS do backend acessível pelo container, sem /v1 |
-| VPS_SSH_PRIVATE_KEY | Chave privada do usuário de deploy |
-| VPS_KNOWN_HOSTS | Registro known_hosts da VPS, com fingerprint conferida por canal confiável |
-| GHCR_READ_USER | Usuário para leitura de imagem privada no GHCR |
-| GHCR_READ_TOKEN | Token com acesso de leitura ao pacote privado |
+| VPS_HOST | VPS hostname or IPv4 address |
+| VPS_PORT | SSH port, for example 22 |
+| VPS_USER | SSH user with access to Docker and the deployment directory |
+| VPS_DEPLOY_PATH | Absolute path, for example /opt/yummy; no spaces or .. |
+| VPS_ARCH | amd64 or arm64; used by the publishing job |
+| APP_PORT | Public frontend port, for example 3000 |
+| API_BASE_URL | Backend HTTP/HTTPS URL reachable from the container, without /v1 |
+| VPS_SSH_PRIVATE_KEY | Deployment user's private SSH key |
+| VPS_KNOWN_HOSTS | VPS known_hosts entry, with its fingerprint verified through a trusted channel |
+| GHCR_READ_USER | Username for reading private GHCR images |
+| GHCR_READ_TOKEN | Token with read access to the private package |
 
-Os dois Secrets GHCR_READ_* podem ser omitidos somente se a imagem for pública. O GITHUB_TOKEN do workflow é fornecido automaticamente pelo GitHub para publicar e inspecionar a imagem; não precisa ser cadastrado.
+Both GHCR_READ_* Secrets may be omitted only when the image is public. GitHub automatically provides the workflow's GITHUB_TOKEN to publish and inspect images; you do not need to create it.
 
-Use Secrets do **repositório**, inclusive VPS_ARCH, pois a publicação não usa o environment production. O deploy usa o environment production, no qual você pode configurar proteções adicionais. Nenhuma credencial deve ser enviada ao Git.
+Use **repository** Secrets, including VPS_ARCH, because publishing does not use the production environment. Deployment uses the production environment, where you can configure additional protections. Never commit credentials.
 
-API_BASE_URL deve ser uma URL simples, sem credenciais embutidas, query ou fragmento. Todos os dados de conexão e ambiente são configurados pelos Secrets. O .env da VPS é gerado pelo workflow com permissões restritas e enviado pela conexão SSH; não é commitado nem incluído na imagem. Alterações nos Secrets passam a valer no próximo deploy.
+API_BASE_URL must be a simple URL without embedded credentials, a query string, or a fragment. All connection and environment settings are configured through Secrets. The workflow generates the VPS .env with restricted permissions and transfers it over SSH; the file is neither committed nor included in the image. Changes to Secrets take effect on the next deployment.
 
-Para porta SSH diferente de 22, o known_hosts deve identificar [host]:porta. Não desative a validação da chave SSH.
+For an SSH port other than 22, known_hosts must identify [host]:port. Do not disable SSH host key verification.
 
-### Preparar a VPS uma vez
+### One-time VPS preparation
 
-Instale Docker Engine, Compose v2, Bash, tar e flock (util-linux). Garanta espaço para pelo menos a imagem atual e a anterior. O usuário de deploy deve conseguir executar Docker sem interação e criar/escrever no diretório escolhido. Prepare esse diretório antes do primeiro deploy, atribuindo as permissões adequadas ao usuário.
+Install Docker Engine, Compose v2, Bash, tar, and flock (util-linux). Provide enough disk space for at least the current and previous images. The deployment user must be able to run Docker without interaction and create or write files in the selected directory. Prepare that directory before the first deployment, granting the user the required permissions.
 
-A VPS precisa acessar GHCR e o backend externo. O container precisa alcançar API_BASE_URL. Não há instalação automática de Docker, criação de usuário ou alteração do firewall neste workflow. Sem Nginx nesta etapa; porta pública, domínio e HTTPS dependem da infraestrutura escolhida.
+The VPS must be able to access GHCR and the external backend. The container must be able to reach API_BASE_URL. The workflow does not install Docker, create users, or change the firewall. Nginx is not included at this stage; public access, domain configuration, and HTTPS depend on your infrastructure.
 
-### Primeiro deploy e atualizações
+### First deployment and updates
 
-1. Configure os Secrets e a VPS.
-2. Envie os workflows à main e aguarde o workflow CI terminar com sucesso, incluindo publicação.
-3. Em Actions → Deploy → Run workflow, selecione a branch main, action=deploy e informe o SHA completo do commit aprovado.
-4. Confira o resultado e os avisos no resumo do workflow.
+1. Configure the Secrets and prepare the VPS.
+2. Push the workflows to main and wait for CI, including image publication, to complete successfully.
+3. Under Actions → Deploy → Run workflow, select the main branch, set action=deploy, and enter the full SHA of the approved commit.
+4. Review the result and any warnings in the workflow summary.
 
-O deploy baixa a imagem antes de alterar o serviço e aguarda saúde do frontend. Em falha de inicialização ou da verificação HTTP, tenta restaurar a imagem e o .env anteriores. No primeiro deploy não há versão anterior; uma falha interrompe o serviço novo e exige correção.
+Deployment downloads the image before changing the service and waits for the frontend to become healthy. If startup or HTTP verification fails, it attempts to restore the previous image and .env. On the first deployment, there is no previous release; a failure stops the new service and requires correction.
 
-A consulta ao backend é verificada separadamente. Backend indisponível gera aviso explícito e não dispara rollback automático do frontend. A validação não cria nem exclui dados de produção.
+Backend connectivity is checked separately. An unavailable backend produces an explicit warning and does not trigger automatic frontend rollback. Validation does not create or delete production data.
 
-A troca usa uma instância e pode causar breve indisponibilidade. Não há garantia de zero downtime.
+Deployment replaces a single instance and may cause a brief interruption. Zero downtime is not guaranteed.
 
-### Rollback e operação
+### Rollback and operations
 
-Execute Actions → Deploy → Run workflow com action=rollback; o campo commit é ignorado. A operação usa a versão anterior registrada na VPS, incluindo seu .env, e depende de a imagem ainda estar no cache Docker. Não altera dados do backend.
+Run Actions → Deploy → Run workflow with action=rollback; the commit field is ignored. This uses the previous release recorded on the VPS, including its .env, and requires that its image is still in the Docker cache. It does not change backend data.
 
-Estrutura do diretório de deploy:
-- releases/<run-id>-<attempt>: Compose, script e .env de cada implantação.
-- current e previous: referências para as versões atual e anterior.
-- history.log: registro de versões e operações.
-- .deploy.lock: bloqueio para impedir implantações simultâneas.
+Deployment directory structure:
 
-Para consultar o serviço diretamente na VPS, entre em <diretorio>/current e execute:
+- releases/<run-id>-<attempt>: Compose configuration, deployment script, and .env for each release.
+- current and previous: references to the current and previous releases.
+- history.log: record of versions and operations.
+- .deploy.lock: lock preventing concurrent deployments.
+
+To inspect the service directly on the VPS, enter <deployment-directory>/current and run:
 
 ```sh
 docker compose --project-name yummy --env-file .env -f compose.production.yaml ps
 docker compose --project-name yummy --env-file .env -f compose.production.yaml logs --tail 100 web
 ```
 
-Não use prune amplo: mantenha a imagem atual e anterior no host e suas tags por SHA no GHCR. O pipeline não exclui imagens do registry; a política inicial é retenção sem limpeza automática. Releases contêm configuração privada: mantenha permissões restritas e backups seguros. Rotacione credenciais comprometidas e atualize os Secrets.
+Avoid broad prune operations: keep the current and previous images on the host and their SHA tags in GHCR. The pipeline does not delete registry images; the initial retention policy has no automatic cleanup. Releases contain private configuration: retain restricted permissions and secure backups. Rotate compromised credentials and update the Secrets.
 
-### Validação local do deploy
+### Local deployment checks
 
 ```sh
 pnpm test:deploy
 pnpm test:docker
 ```
 
-O primeiro testa a orquestração com Docker substituído por um comando isolado: falha de download, falha de inicialização, restauração automática, rollback manual, aviso de backend e validação do ambiente. O segundo constrói a imagem e usa o Compose de produção com Docker real. Não substituem a primeira execução no GitHub/VPS, que depende dos Secrets e acessos do seu ambiente.
+The first command tests orchestration with an isolated substitute for the Docker command: download failures, startup failures, automatic recovery, manual rollback, backend warnings, and environment validation. The second builds the image and runs the production Compose configuration with Docker. These tests do not replace the first GitHub/VPS run, which requires your environment's Secrets and access.
