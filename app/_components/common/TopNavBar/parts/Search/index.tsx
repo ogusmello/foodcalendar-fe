@@ -90,7 +90,7 @@ export function Search({ date, userId }: SearchProps) {
   function dateHref(value: string) {
     const params = new URLSearchParams({ date: value });
     if (userId) params.set("userId", userId);
-    return `/?${params}`;
+    return `/calendario?${params}`;
   }
 
   return (

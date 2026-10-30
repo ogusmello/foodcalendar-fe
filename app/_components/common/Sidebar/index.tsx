@@ -4,12 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { CalendarBlankIcon, ForkKnifeIcon, GearIcon, ListIcon, SidebarIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, SquaresFourIcon, ForkKnifeIcon, GearIcon, ListIcon, SidebarIcon, XIcon } from "@phosphor-icons/react";
 import { NavItem } from "./parts/NavItem";
 import type { SidebarItem } from "./types";
 
 const mainItems: SidebarItem[] = [
-  { href: "/", label: "Planejamento", icon: CalendarBlankIcon },
+  { href: "/", label: "Planejamento", icon: SquaresFourIcon },
+  { href: "/calendario", label: "Calendário", icon: CalendarBlankIcon },
   { href: "/refeicoes", label: "Refeições", icon: ForkKnifeIcon },
 ];
 const settingsItem: SidebarItem = {
