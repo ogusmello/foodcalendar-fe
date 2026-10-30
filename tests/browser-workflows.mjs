@@ -176,6 +176,14 @@ try{
   assert.equal(await page.evaluate(()=>document.activeElement?.textContent),"Adicionar ao calendário","Focus returns to trigger");
   await page.getByRole("button",{name:"Abrir menu",exact:true}).click();
   await page.getByRole("button",{name:"Fechar menu",exact:true}).click();
+  await page.goto(base+"/?view=month&date=2026-10-30&userId=2");
+  await page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"}).getByRole("link",{name:/sexta-feira, 30 de outubro/}).click();
+  await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("date")==="2026-10-30" && url.searchParams.get("userId")==="2");
+  await page.locator('[aria-label="Calendário diário"]').waitFor();
+  await page.goto(base+"/?view=week&date=2026-10-30&userId=2");
+  await page.getByRole("region",{name:"Calendário semanal, rolável em telas pequenas"}).getByRole("columnheader").getByRole("link").nth(4).click();
+  await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("date")==="2026-10-30" && url.searchParams.get("userId")==="2");
+  await page.locator('[aria-label="Calendário diário"]').waitFor();
   assert.deepEqual(errors,[],"No browser exceptions");
   console.log("PASS: browser creation, Ambos, plan editing, search-to-meal modal, meal editing, cloning, profile creation, themes and mobile navigation.");
 }catch(error){ if(page){fs.mkdirSync("test-results",{recursive:true});await page.screenshot({path:"test-results/failure.png",fullPage:true});}throw error;
