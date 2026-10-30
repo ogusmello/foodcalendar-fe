@@ -52,3 +52,6 @@ Projeto pessoal, sem finalidade comercial neste momento. O público inicial é o
 | Apoio | #a54c23 | #f0b48b |
 
 O azul fica restrito ao feedback informativo, sem dominar a identidade.
+
+## Refinamento de cor
+A pedido do usuário, ampliar a variedade cromática. Verde principal mais vivo (#18794e no tema claro) e apoio laranja (#b5481d). Refeições usam famílias próprias: café em amarelo, almoço em verde, lanche em pêssego, jantar em lavanda e sobremesa em rosa. Manter as superfícies neutras para destacar o conteúdo sem sobrecarregar a interface. Esta revisão substitui os valores anteriores de primary e accent da tabela base; a fonte de verdade permanece app/globals.css.

@@ -11,6 +11,7 @@ export interface MealSlot {
   type: MealType;
   label: string;
   icon: Icon;
+  color: string;
 }
 
 export interface MealPill {

@@ -7,11 +7,11 @@ import { formatDate } from "@/lib/calendar";
 import type { DayOverviewProps, MealPill, MealSlot } from "./types";
 
 const slots = [
-  { type: "BREAKFAST", label: "Café da manhã", icon: CoffeeIcon },
-  { type: "LUNCH", label: "Almoço", icon: ForkKnifeIcon },
-  { type: "SNACK", label: "Lanche", icon: CookieIcon },
-  { type: "DINNER", label: "Jantar", icon: MoonIcon },
-  { type: "DESSERT", label: "Sobremesa", icon: CakeIcon },
+  { type: "BREAKFAST", label: "Café da manhã", icon: CoffeeIcon, color: "bg-meal-breakfast text-meal-breakfast-foreground" },
+  { type: "LUNCH", label: "Almoço", icon: ForkKnifeIcon, color: "bg-meal-lunch text-meal-lunch-foreground" },
+  { type: "SNACK", label: "Lanche", icon: CookieIcon, color: "bg-meal-snack text-meal-snack-foreground" },
+  { type: "DINNER", label: "Jantar", icon: MoonIcon, color: "bg-meal-dinner text-meal-dinner-foreground" },
+  { type: "DESSERT", label: "Sobremesa", icon: CakeIcon, color: "bg-meal-dessert text-meal-dessert-foreground" },
 ] satisfies MealSlot[];
 
 export function DayOverview({ date, data, userId }: DayOverviewProps) {
@@ -24,7 +24,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
   });
 
   return (
-    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-2xl rounded-full bg-primary-muted/50 p-1">
+    <section aria-label={`Refeições de ${date ? formatDate(date) : "hoje"}`} className="mx-auto w-full min-w-0 max-w-2xl rounded-full bg-surface-muted p-1">
       <div
         role="region"
         aria-label="Refeições do dia, role horizontalmente para explorar"
@@ -50,7 +50,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
                 <Link
                   href={`/?${params}`}
                   title={`${slot.label}: ${subtitle}${plan ? ` · ${plan.user.name}` : ""}`}
-                  className="m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-primary/15 bg-primary-muted px-3 py-1 text-primary-muted-foreground hover:border-primary/40 hover:bg-surface focus-visible:-outline-offset-2"
+                  className={`m-0.5 flex min-h-9 max-w-56 items-center gap-2 rounded-full border border-current/10 px-3 py-1 hover:border-current/40 focus-visible:-outline-offset-2 ${slot.color}`}
                 >
                   <Icon size={18} aria-hidden="true" className="shrink-0" />
                   <span className="min-w-0">
@@ -58,7 +58,7 @@ export function DayOverview({ date, data, userId }: DayOverviewProps) {
                       {slot.label}
                       {!userId && plan && <span className="max-w-20 truncate font-normal normal-case tracking-normal">{plan.user.name}</span>}
                     </span>
-                    <span className="block truncate text-xs leading-4 font-medium text-foreground">{subtitle}</span>
+                    <span className="block truncate text-xs leading-4 font-medium">{subtitle}</span>
                   </span>
                 </Link>
               </li>

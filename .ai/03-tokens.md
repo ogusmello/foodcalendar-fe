@@ -54,3 +54,6 @@ Trocar o tema atualiza toda a interface. Novas telas reutilizam tokens e escalas
 - Foco global visível e seleção de texto usam tokens.
 - Pares de texto/fundo principais e de feedback verificados por cálculo WCAG: todos acima de 4,5:1 nos dois temas. Isso não substitui revisão visual de componentes.
 - Lint, TypeScript e build de produção passaram após a implementação.
+
+## Tokens de categorias de refeição
+Implementados meal-breakfast, meal-lunch, meal-snack, meal-dinner e meal-dessert, cada um com seu par *-foreground e valores próprios nos dois temas. Consumir via bg-meal-* e text-meal-*-foreground, com nomes de classes completos. Contraste calculado dos cinco pares: mínimo de 6,25:1 no claro e 7,44:1 no escuro. Não confundir cores de categoria com sucesso, alerta ou erro; ícone e texto continuam identificando cada tipo.
