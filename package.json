@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test:api": "node tests/api-workflows.mjs",
     "test:ui": "node tests/browser-workflows.mjs",
-    "test": "pnpm test:api && pnpm test:ui"
+    "test": "pnpm test:api && pnpm test:ui && pnpm test:standalone",
+    "test:standalone": "node tests/standalone-smoke.mjs",
+    "test:docker": "node tests/docker-smoke.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -30,5 +32,9 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@12.11.2"
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=12.11.2"
+  }
 }
