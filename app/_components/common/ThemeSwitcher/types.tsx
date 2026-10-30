@@ -1,4 +1,4 @@
-export type ThemePreference = "system" | "light" | "dark";
+export type ThemePreference = "light" | "dark";
 
 export interface ThemeSwitcherProps {
   variant?: "select" | "icon";

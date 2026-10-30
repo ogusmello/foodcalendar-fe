@@ -1,50 +1,43 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { DesktopIcon, MoonIcon, SunIcon } from "@phosphor-icons/react";
+import { MoonIcon, SunIcon } from "@phosphor-icons/react";
 import type { ThemePreference, ThemeSwitcherProps } from "./types";
 
 const storageKey = "foodist-theme";
 const changeEvent = "foodist-theme-change";
 
 function isThemePreference(value: string | null): value is ThemePreference {
-  return value === "light" || value === "dark" || value === "system";
+  return value === "light" || value === "dark";
 }
 
 function getPreference(): ThemePreference {
   const value = document.documentElement.dataset.themePreference ?? null;
-  return isThemePreference(value) ? value : "system";
+  return isThemePreference(value) ? value : "dark";
 }
 
 function applyTheme(preference: ThemePreference) {
-  const dark = preference === "dark" ||
-    (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const dark = preference === "dark";
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.themePreference = preference;
 }
 
 function subscribe(onChange: () => void) {
-  const media = window.matchMedia("(prefers-color-scheme: dark)");
-  function syncSystem() {
-    if (getPreference() === "system") applyTheme("system");
-  }
   function syncStorage(event: StorageEvent) {
     if (event.key !== storageKey && event.key !== null) return;
-    applyTheme(isThemePreference(event.newValue) ? event.newValue : "system");
+    applyTheme(isThemePreference(event.newValue) ? event.newValue : "dark");
     onChange();
   }
-  media.addEventListener("change", syncSystem);
   window.addEventListener("storage", syncStorage);
   window.addEventListener(changeEvent, onChange);
   return () => {
-    media.removeEventListener("change", syncSystem);
     window.removeEventListener("storage", syncStorage);
     window.removeEventListener(changeEvent, onChange);
   };
 }
 
 function getServerPreference(): ThemePreference {
-  return "system";
+  return "dark";
 }
 
 export function ThemeSwitcher({ variant = "select" }: ThemeSwitcherProps) {
@@ -62,9 +55,9 @@ export function ThemeSwitcher({ variant = "select" }: ThemeSwitcherProps) {
   }
 
   if (variant === "icon") {
-    const labels = { system: "Sistema", light: "Claro", dark: "Escuro" };
-    const next = preference === "system" ? "light" : preference === "light" ? "dark" : "system";
-    const Icon = preference === "system" ? DesktopIcon : preference === "light" ? SunIcon : MoonIcon;
+    const labels = { light: "Claro", dark: "Escuro" };
+    const next = preference === "light" ? "dark" : "light";
+    const Icon = preference === "light" ? SunIcon : MoonIcon;
     return (
       <button type="button" onClick={() => changeTheme(next)} aria-label={`Tema: ${labels[preference]}. Alterar para ${labels[next]}.`} title={`Tema: ${labels[preference]} · Alterar para ${labels[next]}`} className="flex size-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground">
         <Icon size={20} aria-hidden="true" />
@@ -80,7 +73,6 @@ export function ThemeSwitcher({ variant = "select" }: ThemeSwitcherProps) {
         onChange={(event) => changeTheme(event.target.value)}
         className="rounded-control border border-border bg-surface px-3 py-2 text-sm text-foreground"
       >
-        <option value="system">Sistema</option>
         <option value="light">Claro</option>
         <option value="dark">Escuro</option>
       </select>

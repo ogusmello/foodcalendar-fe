@@ -17,12 +17,12 @@ export const metadata: Metadata = {
 };
 
 const themeScript = `(() => {
-  let preference = "system";
+  let preference = "dark";
   try {
     const stored = localStorage.getItem("foodist-theme");
-    if (stored === "light" || stored === "dark" || stored === "system") preference = stored;
+    if (stored === "light" || stored === "dark") preference = stored;
   } catch {}
-  const dark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+  const dark = preference === "dark";
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.themePreference = preference;
 })();`;
