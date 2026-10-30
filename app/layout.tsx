@@ -1,8 +1,6 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { DemoNotice } from "./_components/common/DemoNotice";
 import { DM_Sans, Outfit } from "next/font/google";
 import { Sidebar } from "./_components/common/Sidebar";
 import { Wrapper } from "./_components/common/Wrapper";
@@ -37,7 +35,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Sidebar />
         <Wrapper>
           <TopNavBar />
-          <Suspense fallback={null}><DemoNotice /></Suspense>
           <main className="w-full min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         </Wrapper>
       </body>

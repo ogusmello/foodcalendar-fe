@@ -19,7 +19,7 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
   const id = useId();
   const { kind, plan } = request;
   const isPlan = kind === "plan" || kind === "edit-plan";
-  const isDelete = kind.startsWith("delete-") || kind === "reset";
+  const isDelete = kind.startsWith("delete-");
   const [users, setUsers] = useState<User[]>([]);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [plans, setPlans] = useState<MealPlan[]>([]);
@@ -132,8 +132,8 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
           return;
         }
       } else if (isDelete) {
-        const resource = kind === "delete-user" ? "/users/" + request.user!.id : kind === "delete-meal" ? "/meals/" + request.meal!.id : kind === "delete-plan" ? "/meal-plans/" + plan!.id : "/demo/reset";
-        await mutate(resource, kind === "reset" ? "POST" : "DELETE", kind === "reset" ? {} : undefined);
+        const resource = kind === "delete-user" ? "/users/" + request.user!.id : kind === "delete-meal" ? "/meals/" + request.meal!.id : "/meal-plans/" + plan!.id;
+        await mutate(resource, "DELETE");
       }
       setDone(true); onChanged();
     } catch (error) { showError(error); } finally { busy(false); }
@@ -171,7 +171,7 @@ export function WorkflowForm({ request, onClose, onBusy, onChanged }: WorkflowFo
         {kind === "clone" && withoutOccurrence > 0 && <p className="text-xs text-warning">{withoutOccurrence} plano(s) não terão ocorrências nos dias do destino. A cópia mantém os dias da semana originais.</p>}
         {kind === "clone" && originPlans.length > 0 && <ul className="max-h-36 space-y-1 overflow-y-auto rounded-control bg-surface-muted p-3">{originPlans.map(item => <li key={item.id} className="text-xs">{item.user.name} · {item.meal.name} · {item.targetDays.map(day=>dayNames[dayValues.indexOf(day)]).join(", ")}</li>)}</ul>}
       </>}
-      {isDelete && <div className="space-y-3 rounded-card bg-danger-muted p-4 text-sm text-danger"><p className="font-semibold">Confirmar {kind === "reset" ? "restauração dos dados de demonstração" : "exclusão"}?</p><p>{kind === "delete-user" ? `Excluir ${request.user?.name} também remove todos os seus planos. As refeições permanecem.` : kind === "delete-meal" ? `Excluir ${request.meal?.name} também remove os planos que usam essa refeição.` : kind === "delete-plan" ? "Toda a recorrência deste plano será removida. A pessoa e a refeição permanecem." : "As criações e alterações de demonstração serão descartadas e as fixtures iniciais restauradas."}</p></div>}
+      {isDelete && <div className="space-y-3 rounded-card bg-danger-muted p-4 text-sm text-danger"><p className="font-semibold">Confirmar exclusão?</p><p>{kind === "delete-user" ? `Excluir ${request.user?.name} também remove todos os seus planos. As refeições permanecem.` : kind === "delete-meal" ? `Excluir ${request.meal?.name} também remove os planos que usam essa refeição.` : "Toda a recorrência deste plano será removida. A pessoa e a refeição permanecem."}</p></div>}
     </fieldset>
     {successful.length > 0 && <p role="status" className="text-xs text-success">{successful.length} pessoa(s) já concluída(s). Não serão reenviadas.</p>}
     {Object.entries(errors).filter(([key]) => !["form", "message"].includes(key)).map(([key, text]) => <p key={key} className="text-xs text-danger">{text}</p>)}

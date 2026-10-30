@@ -13,7 +13,7 @@ const Context = createContext<WorkflowContextValue | null>(null);
 const titles = {
   user: "Adicionar pessoa", meal: "Nova refeição", plan: "Adicionar ao calendário", clone: "Copiar período",
   "edit-user": "Editar pessoa", "edit-plan": "Editar planejamento",
-  "delete-user": "Excluir pessoa", "delete-meal": "Excluir refeição", "delete-plan": "Excluir planejamento", reset: "Restaurar demonstração",
+  "delete-user": "Excluir pessoa", "delete-meal": "Excluir refeição", "delete-plan": "Excluir planejamento",
 };
 export function useWorkflow() {
   const value = useContext(Context);

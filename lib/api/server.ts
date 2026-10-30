@@ -1,6 +1,5 @@
 import "server-only";
 import { connection } from "next/server";
-import { getMockResponse, mockEnabled, mutateMock } from "./mocks";
 import { ApiMutationError } from "./errors";
 export { ApiMutationError } from "./errors";
 
@@ -13,12 +12,18 @@ export async function patchApi<T>(path: string, body: Record<string, unknown>, s
 export async function requestApi<T>(path: string, method: string, body?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
   await connection();
   signal?.throwIfAborted();
-  if (mockEnabled()) return (method === "GET" ? getMockResponse(path) : mutateMock(path, method, body ?? {})) as T;
-  const base = process.env.API_BASE_URL;
-  if (!base) throw new ApiMutationError(503, { message: "Backend não configurado." });
+  const configured = process.env.API_BASE_URL?.trim();
+  let base: URL;
+  try {
+    if (!configured) throw new Error("Missing API_BASE_URL");
+    base = new URL(configured);
+    if (!["http:", "https:"].includes(base.protocol) || base.username || base.password || base.search || base.hash) throw new Error("Invalid API_BASE_URL");
+  } catch {
+    throw new ApiMutationError(503, { message: "API não configurada. Defina API_BASE_URL com uma URL HTTP ou HTTPS válida no ambiente do servidor." });
+  }
   let response: Response;
   try {
-    response = await fetch(`${base.replace(/\/$/, "")}/v1${path}`, {
+    response = await fetch(`${base.href.replace(/\/+$/, "")}/v1${path}`, {
       method, cache: "no-store",
       headers: { Accept: "application/json", ...(body ? { "Content-Type": "application/json" } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),

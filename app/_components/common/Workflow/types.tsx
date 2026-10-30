@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Meal, MealPlan, MealType, User } from "@/lib/api/types";
 
-export type WorkflowKind = "user" | "meal" | "plan" | "clone" | "edit-user" | "edit-plan" | "delete-user" | "delete-meal" | "delete-plan" | "reset";
+export type WorkflowKind = "user" | "meal" | "plan" | "clone" | "edit-user" | "edit-plan" | "delete-user" | "delete-meal" | "delete-plan";
 export interface WorkflowRequest {
   kind: WorkflowKind;
   user?: User;
