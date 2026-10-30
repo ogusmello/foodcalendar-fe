@@ -43,3 +43,17 @@ export function shiftMonth(value: string, offset: number): string {
   if (!date) throw new Error("Invalid calendar date");
   return localDate(new Date(date.getFullYear(), date.getMonth() + offset, 1, 12));
 }
+
+export function shiftDays(value: string, offset: number): string {
+  const date = parseDate(value);
+  if (!date) throw new Error("Invalid calendar date");
+  date.setDate(date.getDate() + offset);
+  return localDate(date);
+}
+
+export function getWeekDays(value: string): string[] {
+  const date = parseDate(value);
+  if (!date) throw new Error("Invalid calendar date");
+  const monday = shiftDays(value, -((date.getDay() + 6) % 7));
+  return Array.from({ length: 7 }, (_, index) => shiftDays(monday, index));
+}
