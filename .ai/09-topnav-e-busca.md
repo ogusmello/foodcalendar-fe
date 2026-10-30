@@ -38,3 +38,12 @@
 Lint, TypeScript e build de produção aprovados. Verificação HTTP com API simulada cobriu busca, encoding, filtros individuais, visão conjunta, validação de datas e falhas parciais. O ambiente de automação do navegador falhou ao iniciar; revisão visual e de teclado em navegador ainda pendente.
 
 Framer Motion permanece na penúltima etapa e Docker/Compose na última.
+## Escopo das sugestões e da pesquisa
+- Ao abrir a busca com campo vazio ou apenas espaços, listar somente refeições planejadas na data selecionada e para a pessoa filtrada (Ambos usa os dois perfis).
+- Remover repetições da mesma refeição por ID, sem sugerir refeições fora do planejamento desse dia.
+- Ao digitar qualquer nome, pesquisar em todo o catálogo, independentemente do dia ou pessoa selecionados.
+- Identificar o escopo no título da seção; informar que digitar permite buscar no catálogo inteiro.
+- Dia sem planejamento retorna lista vazia, sem substituir por catálogo. Falhas parciais são informadas.
+- Respostas e cancelamento consideram texto, data e pessoa para não exibir resultados de um contexto anterior.
+- /api/search sem texto exige date e aceita userId; com texto usa a pesquisa global por nome. A consulta diária é compartilhada com a TopNav em lib/api/navigation.ts.
+- Validação: lint, tipos, build e HTTP de sugestões diárias, filtro individual, pesquisa de refeição não planejada no dia, fim de semana, dia vazio e parâmetros inválidos aprovados.

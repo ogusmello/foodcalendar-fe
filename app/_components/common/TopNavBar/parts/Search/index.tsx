@@ -39,7 +39,9 @@ export function Search({ date, userId }: SearchProps) {
   const [attempt, setAttempt] = useState(0);
   const [today, setToday] = useState("");
   const normalizedQuery = query.trim();
-  const current = response?.query === normalizedQuery ? response : null;
+  const selectedDate = date || today;
+  const resultKey = normalizedQuery ? `query:${normalizedQuery}` : `day:${selectedDate}:${userId ?? ""}`;
+  const current = response?.key === resultKey ? response : null;
   const dates = datesForQuery(query, today);
   if (!query.trim() && date && date !== today && parseDate(date)) dates.unshift({ date, label: "Dia selecionado" });
 
@@ -71,14 +73,19 @@ export function Search({ date, userId }: SearchProps) {
     const unlock = lockPageScroll();
     const controller = new AbortController();
     const timeout = window.setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(normalizedQuery)}`, { signal: controller.signal })
+      const params = new URLSearchParams({ q: normalizedQuery });
+      if (!normalizedQuery) {
+        params.set("date", selectedDate);
+        if (userId) params.set("userId", userId);
+      }
+      fetch(`/api/search?${params}`, { signal: controller.signal })
         .then(async (result) => {
           if (!result.ok) throw new Error("Search unavailable");
-          return result.json() as Promise<{ meals: Meal[] }>;
+          return result.json() as Promise<{ meals: Meal[]; partial: boolean }>;
         })
-        .then((data) => setResponse({ query: normalizedQuery, meals: data.meals, failed: false }))
+        .then((data) => setResponse({ key: resultKey, meals: data.meals, failed: false, partial: data.partial }))
         .catch(() => {
-          if (!controller.signal.aborted) setResponse({ query: normalizedQuery, meals: [], failed: true });
+          if (!controller.signal.aborted) setResponse({ key: resultKey, meals: [], failed: true, partial: false });
         });
     }, 250);
     return () => {
@@ -86,7 +93,7 @@ export function Search({ date, userId }: SearchProps) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [open, normalizedQuery, attempt]);
+  }, [open, normalizedQuery, attempt, selectedDate, userId, resultKey]);
 
   function dateHref(value: string) {
     const params = new URLSearchParams({ date: value });
@@ -142,12 +149,14 @@ export function Search({ date, userId }: SearchProps) {
             </li>)}</ul>
           </section>}
           <section aria-labelledby="meal-results" aria-busy={!current}>
-            <h3 id="meal-results" className="mb-2 px-2 text-xs font-medium text-muted-foreground">Refeições</h3>
+            <h3 id="meal-results" className="mb-2 px-2 text-xs font-medium text-muted-foreground">{normalizedQuery ? "Refeições em todo o catálogo" : `Refeições de ${selectedDate ? formatDate(selectedDate) : "hoje"}`}</h3>
+            {!normalizedQuery && <p className="mb-3 px-2 text-xs text-muted-foreground">Digite um nome para buscar em todo o catálogo.</p>}
             <div role="status" aria-live="polite">
               {!current && <p className="px-3 py-5 text-sm text-muted-foreground">Buscando refeições…</p>}
               {current?.failed && <div className="rounded-control bg-surface-muted p-4"><p className="text-sm text-muted-foreground">Não foi possível consultar as refeições. Você ainda pode buscar datas.</p><button type="button" onClick={() => { setResponse(null); setAttempt(attempt + 1); }} className="mt-3 rounded-control text-sm font-medium text-primary">Tentar novamente</button></div>}
-              {current && !current.failed && current.meals.length === 0 && <p className="px-3 py-5 text-sm text-muted-foreground">Nenhuma refeição encontrada.</p>}
+              {current && !current.failed && current.meals.length === 0 && <p className="px-3 py-5 text-sm text-muted-foreground">{normalizedQuery ? "Nenhuma refeição encontrada." : "Nenhuma refeição planejada para este dia."}</p>}
             </div>
+            {current?.partial && <p role="status" className="mb-2 px-3 text-xs text-warning">Parte das refeições do dia está indisponível.</p>}
             <ul className="space-y-1">{current?.meals.slice(0, 30).map((meal) => <li key={meal.id}>
               <MealTrigger meal={meal} searchResult onOpen={close} className="flex w-full items-center gap-3 rounded-control px-3 py-3 text-left hover:bg-surface-muted focus-visible:bg-primary-muted">
                 <span className="rounded-control bg-accent-muted p-2 text-accent"><ForkKnifeIcon size={20} aria-hidden="true" /></span>
@@ -155,7 +164,7 @@ export function Search({ date, userId }: SearchProps) {
                 <ArrowRightIcon size={16} aria-hidden="true" className="text-muted-foreground" />
               </MealTrigger>
             </li>)}</ul>
-            {current && current.meals.length > 30 && <Link href={`/refeicoes?name=${encodeURIComponent(normalizedQuery)}`} onNavigate={close} className="mt-3 inline-block rounded-control px-3 text-sm text-primary">Ver todas as refeições</Link>}
+            {normalizedQuery && current && current.meals.length > 30 && <Link href={`/refeicoes?name=${encodeURIComponent(normalizedQuery)}`} onNavigate={close} className="mt-3 inline-block rounded-control px-3 text-sm text-primary">Ver todas as refeições</Link>}
           </section>
         </div>
         <footer className="flex items-center justify-between gap-3 border-t border-border px-5 py-3 text-xs text-muted-foreground"><span>↑ ↓ para navegar · Enter para abrir</span><span>Esc para fechar</span></footer>

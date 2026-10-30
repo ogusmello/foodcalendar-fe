@@ -5,7 +5,8 @@ export interface SearchProps {
   userId: string | null;
 }
 export interface SearchResponse {
-  query: string;
+  key: string;
+  partial: boolean;
   meals: Meal[];
   failed: boolean;
 }
