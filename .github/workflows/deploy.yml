@@ -1,0 +1,128 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Deployment operation
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      commit:
+        description: Full commit SHA with a successful main CI publication (deploy only)
+        type: string
+        required: false
+permissions:
+  contents: read
+  actions: read
+  packages: read
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_PORT: ${{ secrets.VPS_PORT }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+      - name: Verify release publication
+        if: inputs.action == 'deploy'
+        id: release
+        env:
+          RELEASE_SHA: ${{ inputs.commit }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node .github/scripts/resolve-release.mjs
+          git merge-base --is-ancestor "$RELEASE_SHA" origin/main
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        if: inputs.action == 'deploy'
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        if: inputs.action == 'deploy'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve immutable image
+        if: inputs.action == 'deploy'
+        env:
+          IMAGE: ${{ steps.release.outputs.image }}
+          RELEASE_SHA: ${{ inputs.commit }}
+        run: |
+          docker buildx imagetools inspect "$IMAGE:$RELEASE_SHA" --format '{{json .Manifest}}' > "$RUNNER_TEMP/manifest.json"
+          DIGEST="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["digest"])' "$RUNNER_TEMP/manifest.json")"
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          echo "APP_IMAGE=$IMAGE@$DIGEST" >> "$GITHUB_ENV"
+      - name: Prepare release configuration
+        if: inputs.action == 'deploy'
+        env:
+          APP_PORT: ${{ secrets.APP_PORT }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          GHCR_READ_USER: ${{ secrets.GHCR_READ_USER }}
+          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+        run: |
+          python3 .github/scripts/prepare-deploy.py
+          cp compose.production.yaml deploy-bundle/
+          cp scripts/deploy.sh deploy-bundle/
+      - name: Configure SSH
+        env:
+          PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          patterns = {"VPS_HOST": r"[a-zA-Z0-9][a-zA-Z0-9.-]*", "VPS_USER": r"[a-z_][a-z0-9_-]*", "VPS_PORT": r"[0-9]+", "VPS_DEPLOY_PATH": r"/[a-zA-Z0-9_/-]+"}
+          for key, pattern in patterns.items():
+              if not re.fullmatch(pattern, os.environ.get(key, "")): raise ValueError("Invalid " + key)
+          if not 1 <= int(os.environ["VPS_PORT"]) <= 65535: raise ValueError("Invalid SSH port")
+          if ".." in os.environ["VPS_DEPLOY_PATH"] or os.environ["VPS_DEPLOY_PATH"] == "/": raise ValueError("Invalid deployment directory")
+          directory = Path.home() / ".ssh"
+          directory.mkdir(mode=0o700, exist_ok=True)
+          for key, name in [("PRIVATE_KEY", "deploy_key"), ("KNOWN_HOSTS", "known_hosts")]:
+              value = os.environ.get(key, "")
+              if not value.strip(): raise ValueError("Missing " + key)
+              target = directory / name
+              target.write_text(value.rstrip() + "\n")
+              target.chmod(0o600)
+          PY
+      - name: Deploy or rollback
+        env:
+          OPERATION: ${{ inputs.action }}
+        run: |
+          SSH=(ssh -i "$HOME/.ssh/deploy_key" -p "$VPS_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts")
+          if [[ "$OPERATION" == deploy ]]; then
+            RELEASE="$VPS_DEPLOY_PATH/releases/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+            tar -C deploy-bundle -cf - . | "${SSH[@]}" "$VPS_USER@$VPS_HOST" "umask 077; mkdir -p '$RELEASE' && tar -xf - -C '$RELEASE' && bash '$RELEASE/deploy.sh' deploy '$VPS_DEPLOY_PATH' '$RELEASE'" | tee "$RUNNER_TEMP/deploy-result.txt"
+          else
+            "${SSH[@]}" "$VPS_USER@$VPS_HOST" "bash '$VPS_DEPLOY_PATH/current/deploy.sh' rollback '$VPS_DEPLOY_PATH'" | tee "$RUNNER_TEMP/deploy-result.txt"
+          fi
+      - name: Record result
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+          OPERATION: ${{ inputs.action }}
+          RELEASE_SHA: ${{ inputs.commit }}
+        run: |
+          echo "Operation: $OPERATION; result: $RESULT; commit: $RELEASE_SHA" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "^(Previous image:|Frontend healthy:)" "$RUNNER_TEMP/deploy-result.txt" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          if grep -q '^WARNING:' "$RUNNER_TEMP/deploy-result.txt" 2>/dev/null; then
+            echo "Warning: frontend healthy, backend read check failed. No automatic rollback." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Remove temporary credentials
+        if: always()
+        run: |
+          rm -f "$HOME/.ssh/deploy_key" "$HOME/.ssh/known_hosts"
+          rm -rf deploy-bundle

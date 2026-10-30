@@ -9,3 +9,6 @@ playwright-report
 tests
 *.tsbuildinfo
 *.log
+.github
+scripts
+deploy-bundle

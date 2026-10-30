@@ -5,21 +5,21 @@ import { execFileSync } from "node:child_process";
 const probe=http.createServer().listen(0,"127.0.0.1");await once(probe,"listening");const port=probe.address().port;await new Promise(resolve=>probe.close(resolve));
 const project="foodist-smoke-"+process.pid;
 const tag="smoke-"+process.pid;
-const env={...process.env,FOODIST_TAG:tag,PORT:String(port),API_BASE_URL:"http://127.0.0.1:1"};
-const args=["compose","--project-name",project];
+const env={...process.env,FOODIST_TAG:tag,PORT:String(port),API_BASE_URL:"http://127.0.0.1:1",APP_IMAGE:"foodist-fe:"+tag};
+const args=["compose","-f","compose.production.yaml","--project-name",project];
 function compose(command, capture=false){return execFileSync("docker",[...args,...command],{env,stdio:capture?["ignore","pipe","pipe"]:"inherit",encoding:"utf8"});}
 const base="http://127.0.0.1:"+port;
 try{
   compose(["config","--quiet"]);
-  compose(["build"]);
-  compose(["up","-d","--wait","--wait-timeout","60"]);
+  execFileSync("docker", ["compose", "--project-name", project, "build"], {env, stdio:"inherit"});
+  compose(["up","-d","--pull","never","--wait","--wait-timeout","60"]);
   assert.equal(compose(["exec","-T","web","node","-p","process.getuid()"],true).trim(),"1001");
   compose(["exec","-T","web","test","!","-e","/app/.env.local"]);
   const health=await(await fetch(base+"/api/health")).json();assert.equal(health.mode,"api");
   const page=await fetch(base+"/");assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes("Calendário"));
   const css=html.match(/href="([^"]+\.css[^"]*)"/)?.[1];assert.ok(css);assert.equal((await fetch(base+css)).status,200);
   assert.equal((await fetch(base + "/api/users")).status, 503, "No fabricated data when the API is unavailable");
-  compose(["up", "-d", "--force-recreate", "--wait", "--wait-timeout", "60"]);
+  compose(["up", "-d", "--pull", "never", "--force-recreate", "--wait", "--wait-timeout", "60"]);
   let status;
   for (let attempt = 0; attempt < 10; attempt++) {
     try { status = (await fetch(base + "/api/users", { headers: { Connection: "close" } })).status; break; } catch {}

@@ -12,7 +12,8 @@
     "test:ui": "node tests/browser-workflows.mjs",
     "test": "pnpm test:api && pnpm test:ui && pnpm test:standalone",
     "test:standalone": "node tests/standalone-smoke.mjs",
-    "test:docker": "node tests/docker-smoke.mjs"
+    "test:docker": "node tests/docker-smoke.mjs",
+    "test:deploy": "python3 tests/deploy-workflows.py"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
