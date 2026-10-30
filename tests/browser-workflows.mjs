@@ -137,9 +137,15 @@ try{
   await page.getByLabel("Tema",{exact:true}).selectOption("light");
   await page.goto(base+"/?view=month");
   fs.mkdirSync("test-results",{recursive:true});
+  const brandPath=page.getByRole("link",{name:"Foodist — Calendário",exact:true}).locator("svg path").first();
+  const lightBrand=await brandPath.evaluate(element=>getComputedStyle(element).fill);
+  assert.equal(lightBrand,await page.locator("body").evaluate(element=>getComputedStyle(element).color),"Light logo inherits foreground");
   await page.screenshot({path:"test-results/calendar-desktop-light.png",fullPage:true});
   await page.getByRole("button",{name:/Tema: Claro/}).click();
   assert.equal(await page.locator("html").getAttribute("data-theme"),"dark");
+  const darkBrand=await brandPath.evaluate(element=>getComputedStyle(element).fill);
+  assert.equal(darkBrand,await page.locator("body").evaluate(element=>getComputedStyle(element).color),"Dark logo inherits foreground");
+  assert.notEqual(lightBrand,darkBrand,"Logo changes color with theme");
   await page.screenshot({path:"test-results/calendar-desktop-dark.png",fullPage:true});
   await page.setViewportSize({width:390,height:844});
   assert.equal(await nextMeals.isVisible(),false);

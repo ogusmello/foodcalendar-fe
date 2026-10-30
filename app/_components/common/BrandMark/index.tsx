@@ -1,0 +1,11 @@
+import type { BrandMarkProps } from "./types";
+
+export function BrandMark(props: BrandMarkProps) {
+  return (
+    <svg width={24} height={24} viewBox="0 0 450 450" fill="currentColor" aria-hidden="true" focusable="false" {...props}>
+      <path d="M284.5 429V400.5C327.667 388.667 414 340.1 414 240.5H224H34C34 340.1 120.333 388.667 163.5 400.5V429H224H284.5Z" />
+      <path d="M56.167 133H390.998C410.217 103.71 422.26 66.122 414.495 21L40 85.4481C43.0888 103.396 48.7329 119.174 56.167 133Z" />
+      <path d="M49.9299 221H398.07C407.874 201.441 414 178.531 414 152H224H34C34 178.531 40.1259 201.441 49.9299 221Z" />
+    </svg>
+  );
+}

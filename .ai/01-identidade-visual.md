@@ -59,3 +59,6 @@ A pedido do usuário, ampliar a variedade cromática. Verde principal mais vivo 
 
 ## Ajuste de saturação
 Após revisão do usuário, suavizar a paleta: manter amarelo, verde, pêssego, lavanda e rosa em fundos discretos, com textos de cor moderada. Verde principal #2b6d4f e apoio #a55732 no claro. No escuro, reduzir também a saturação dos fundos e textos. Esses valores substituem a revisão mais vibrante anterior; app/globals.css é a fonte de verdade.
+
+## Logo e temas
+BrandMark renderiza a marca SVG inline com fill=currentColor e a classe text-foreground, substituindo a imagem de preenchimento preto fixo na Sidebar. A forma original foi preservada. Chromium verificou que os paths herdam a cor do texto nos temas claro e escuro e que a cor muda ao alternar o tema.
