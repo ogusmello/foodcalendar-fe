@@ -1,4 +1,4 @@
-# Foodist
+# À Mesa
 
 Planejamento alimentar pessoal para o casal. Next.js App Router, React, TypeScript, Tailwind CSS e Framer Motion. A entrega atual funciona com dados de demonstração baseados no contrato da Food Calendar API; não precisa de backend local.
 

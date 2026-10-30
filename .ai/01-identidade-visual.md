@@ -62,3 +62,6 @@ Após revisão do usuário, suavizar a paleta: manter amarelo, verde, pêssego, 
 
 ## Logo e temas
 BrandMark renderiza a marca SVG inline com fill=currentColor e a classe text-foreground, substituindo a imagem de preenchimento preto fixo na Sidebar. A forma original foi preservada. Chromium verificou que os paths herdam a cor do texto nos temas claro e escuro e que a cor muda ao alternar o tema.
+
+## Nome da plataforma
+A marca passa a ser À Mesa, refletindo a rotina alimentar compartilhada do casal. Sidebar, títulos de páginas e textos visíveis usam o novo nome. A forma da marca gráfica permanece. Identificadores internos de armazenamento, eventos, arquivos e volumes já existentes são mantidos por compatibilidade, preservando preferências e dados.
