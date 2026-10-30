@@ -1,7 +1,7 @@
 # Telas e fluxos
 
 ## Base atual
-Uma rota / com conteúdo provisório, Sidebar, TopNavBar e Wrapper. Backend externo documentado em 07-contrato-backend.md. O escopo abaixo é uma proposta ajustada ao contrato disponível.
+A Home (/) é o calendário com visões Hoje, Semana e Mês. Catálogo e Configurações possuem dados de demonstração; busca e modal de detalhes/edição estão implementados. A criação ainda será implementada conforme os planos 13 a 16. Backend externo documentado em 07-contrato-backend.md.
 
 ## MVP proposto
 | Tela/fluxo | Responsabilidade |
@@ -19,7 +19,7 @@ Excluir usuários e refeições exige informar a remoção dos planos associados
 ## Fluxo principal
 Selecionar ou cadastrar usuário → cadastrar refeição → criar plano recorrente → consultar e ajustar planejamento → opcionalmente clonar período.
 
-Propor planejamento como página inicial. Seleção de usuário não é autenticação; não projetar login como recurso existente.
+Calendário confirmado e implementado como página inicial. Seleção de usuário não é autenticação; não projetar login como recurso existente.
 
 ## Evolução futura dependente de backend
 Receitas estruturadas, ingredientes/alimentos, preparo, porções, nutrientes, imagens, lista de compras e assistente não estão cobertos pelo contrato atual.
@@ -67,10 +67,25 @@ Rotas finais, aprovação dos demais fluxos do MVP e comportamento de ações de
 Esboçar a tela semanal com a visão Ambos como principal e suas variações individuais, em desktop e mobile. Usar a direção clean, cantos arredondados e bento grid; definir a paleta em seguida.
 
 ## Navegação estrutural implementada
-- Rotas: / (Planejamento), /refeicoes e /configuracoes.
+- Rotas: / (Calendário), /refeicoes e /configuracoes. /calendario redireciona para a Home.
 - Sidebar com Link do Next.js e rota ativa via usePathname, incluindo correspondência de subrotas.
 - Sidebar, TopNavBar e Wrapper permanecem no layout raiz compartilhado; as páginas ocupam o slot children, com navegação pelo App Router sem recarregar o documento.
 - Recolhimento no desktop preservado durante a navegação; menu expansível no mobile fecha ao navegar e aceita Escape com retorno do foco ao botão.
 - Páginas estruturais com informação explícita sobre integrações ainda não implementadas. Configurações permite trocar o tema.
 - Componentes internos da Sidebar organizados em parts/NavItem com tipos separados.
 - Lint, tipos e build de produção aprovados. Revisão interativa no navegador ainda pendente.
+
+## Próxima implementação: criação
+1. Base comum de formulários modais e transporte POST, incluindo respostas com e sem corpo e mocks persistentes.
+2. Cadastro de pessoas em Configurações (14-criacao-pessoas.md), permitindo começar sem perfis.
+3. Cadastro de refeições no catálogo e no seletor de planejamento (13-criacao-refeicoes.md).
+4. Adicionar refeição ao calendário, com pessoa, tipo, vigência e recorrência (15-criacao-planejamentos.md).
+5. Clonar vigências existentes para novo período (16-clonagem-periodos.md).
+
+O planejamento usa o estilo do modal aprovado, Tailwind e componentes em pastas com index.tsx, types.tsx e parts quando necessário. Separar tipos de domínio dos tipos de props; manter POST e regras de dados fora dos componentes visuais. Reaproveitar o padrão de revalidação entre calendário, catálogo, TopNav e busca.
+
+Após criar entidades novas, os mocks devem persistir usuários, refeições e planos em conjunto, com IDs estáveis e sem colisões, preservando as alterações de demonstração existentes. Manter distinção entre fixtures iniciais e registros criados; não regenerar planos automáticos para novos perfis. Centralizar e versionar o armazenamento de demonstração, cujo reset é explícito.
+
+Prioridades acima são propostas; criar para as duas pessoas em um único fluxo ainda requer confirmação de comportamento. O contrato suporta apenas uma pessoa por chamada. Não implementar ações em lote implicitamente.
+
+Framer Motion continua na penúltima etapa, Docker/Compose na última. Esta entrega é apenas documentação de planejamento.
