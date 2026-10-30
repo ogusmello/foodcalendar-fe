@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: light;
-  --meal-breakfast: #af8c56;
+  --meal-breakfast: #faecdf;
   --meal-breakfast-foreground: #0b0b0b;
   --meal-lunch: #4e4b38;
   --meal-lunch-foreground: #fef4ea;
@@ -44,7 +44,7 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --meal-breakfast: #af8c56;
+  --meal-breakfast: #faecdf;
   --meal-breakfast-foreground: #0b0b0b;
   --meal-lunch: #4e4b38;
   --meal-lunch-foreground: #fef4ea;
