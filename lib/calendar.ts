@@ -21,3 +21,25 @@ export function todayInSaoPaulo(): string {
     day: "2-digit",
   }).format(new Date());
 }
+
+export function getMonthDays(value: string): string[] {
+  const date = parseDate(value);
+  if (!date) throw new Error("Invalid calendar date");
+  const first = new Date(date.getFullYear(), date.getMonth(), 1, 12);
+  first.setDate(first.getDate() - (first.getDay() + 6) % 7);
+  const last = new Date(date.getFullYear(), date.getMonth() + 1, 0, 12);
+  last.setDate(last.getDate() + (7 - last.getDay()) % 7);
+  const days: string[] = [];
+  const cursor = new Date(first);
+  while (cursor <= last) {
+    days.push(localDate(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
+export function shiftMonth(value: string, offset: number): string {
+  const date = parseDate(value);
+  if (!date) throw new Error("Invalid calendar date");
+  return localDate(new Date(date.getFullYear(), date.getMonth() + offset, 1, 12));
+}
