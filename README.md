@@ -1,50 +1,43 @@
 # Yummy!
 
-Planejamento alimentar pessoal para o casal. Next.js App Router, React, TypeScript, Tailwind CSS e Framer Motion. A entrega atual funciona com dados de demonstração baseados no contrato da Food Calendar API; não precisa de backend local.
+Planejamento alimentar pessoal para o casal, com Next.js App Router, React, TypeScript, Tailwind CSS e Framer Motion. Todos os dados são lidos e gravados na Food Calendar API externa. Não há modo demonstração, fixtures ou persistência local na aplicação.
 
-## Desenvolvimento
+## Configuração
 
-Node.js 24 e pnpm 12.11.2.
+Requer Node.js 24 e pnpm 12.11.2.
 
 ```sh
 pnpm install --frozen-lockfile
-cp .env.example .env.local
+cp .env.example .env
+```
+
+Configure a URL da API no arquivo .env:
+
+```dotenv
+API_BASE_URL=https://api.example.com
+PORT=3000
+FOODIST_TAG=local
+```
+
+Use a URL base **sem /v1**, sem query string ou fragmento. O frontend acrescenta /v1 aos recursos. HTTP e HTTPS são aceitos. Reinicie o servidor após alterar o ambiente. Se existir .env.local, ele tem prioridade no Next.js: atualize ou remova valores conflitantes nesse arquivo. O Compose lê .env, não .env.local.
+
+```sh
 pnpm dev
 ```
 
-Acesse http://localhost:3000. Calendário como Home com Hoje, Semana e Mês; catálogo, busca global, detalhes, cadastros, edição, exclusões e cópia de períodos.
+Acesse http://localhost:3000. O navegador chama as rotas internas /api do frontend; o servidor Next acessa a API externa. API_BASE_URL não é NEXT_PUBLIC e não é exposta ao navegador. Sem configuração válida ou com a API indisponível, as consultas retornam erro; não há fallback para dados fictícios.
 
-## Dados de demonstração
+Crie as pessoas em Configurações, cadastre refeições e adicione planejamentos ao calendário. A API fornece os IDs: não há usuários ou refeições predefinidos. Criar ou copiar para Ambos usa uma chamada por pessoa e informa sucesso parcial.
 
-USE_MOCK_DATA=true ativa os mocks. Usuários, refeições e planos são persistidos juntos; IDs são estáveis. No desenvolvimento, o arquivo padrão é .next/cache/foodist-demo-v1.json. MOCK_DATA_PATH permite definir outro arquivo. A primeira execução migra edições do armazenamento antigo de refeições, se existir.
+## Contrato da API
 
-Restaurar dados, na faixa de demonstração, pede confirmação antes de repor as fixtures. Novas pessoas começam sem planos automáticos. Criar ou clonar para Ambos usa uma requisição por pessoa; sucesso parcial é informado e uma operação já concluída não é repetida.
+JSON e recursos /v1/users, /v1/meals e /v1/meal-plans. O backend pertence a outro repositório. Datas são civis (YYYY-MM-DD), sem horários. Tipos de refeição: BREAKFAST, LUNCH, SNACK, DINNER e DESSERT. O contrato atual não oferece login, nutrientes ou ingredientes estruturados.
 
-Datas são civis, sem horário. O backend não oferece horário, ingredientes estruturados, nutrientes ou login; esses campos não são inventados.
+A integração foi construída conforme o README do backend fornecido. A validação com uma instância real ainda depende do ambiente externo estar disponível.
 
-## Verificações
+## Docker Compose
 
-```sh
-pnpm lint
-pnpm build
-pnpm typecheck
-pnpm test
-```
-
-Os testes iniciam servidores de produção em portas livres e usam arquivos temporários isolados, preservando os dados de demonstração da aplicação.
-
-Para testes de interface, instale Chromium e suas bibliotecas uma vez:
-
-```sh
-pnpm exec playwright install --with-deps chromium
-pnpm test:ui
-```
-
-Capturas ficam em test-results/ (ignorado pelo Git). pnpm test:api valida CRUD, validações, recorrência, cascatas, clonagem e o transporte contra um servidor externo simulado. Isso não equivale a testar um backend real.
-
-## Produção com Docker Compose
-
-Requer Docker Engine e Compose v2 na VPS. Sem Nginx ou outro proxy neste pacote.
+Requer Docker Engine e Compose v2. Configure API_BASE_URL no .env antes de subir:
 
 ```sh
 docker compose config --quiet
@@ -53,32 +46,42 @@ docker compose ps
 docker compose logs -f web
 ```
 
-Acesse a porta 3000 do servidor. Para outra porta, defina PORT no arquivo .env do Compose. USE_MOCK_DATA=true é o padrão, conforme o escopo atual. As variáveis do Compose podem ser copiadas de .env.example; o Compose não usa .env.local automaticamente.
+A porta pública é definida por PORT (padrão 3000). Dentro do container, localhost aponta para o próprio container: use a URL externa da API ou um hostname alcançável pela rede do container.
 
-O volume foodist-data guarda os dados em /data/foodist-demo-v1.json. Atualizar ou recriar o container preserva esse volume. Não use down -v quando quiser manter os dados.
+A imagem usa Node 24, build em múltiplos estágios, saída standalone do Next.js e usuário sem privilégios. A URL da API é configurável em runtime, sem rebuild. Sem Nginx, banco ou volume de dados: a persistência é responsabilidade do backend. Volumes antigos da demonstração não são usados nem apagados automaticamente.
+
+O healthcheck /api/health verifica que o frontend está respondendo, independentemente da disponibilidade do backend. Falhas do backend são apresentadas nas consultas e formulários.
+
+Arquivos .env privados, .ai/, testes e dependências locais ficam fora do contexto de build. Fontes de next/font podem exigir internet durante o build.
+
+### Atualização
 
 ```sh
-docker compose down
 docker compose up -d --build
 ```
 
-A imagem usa múltiplos estágios e a saída standalone do Next. O runtime executa como usuário sem privilégios e expõe a saúde em /api/health. Código-fonte, dependências locais, arquivos .env privados e dados locais não entram no contexto de build. Fontes de next/font podem exigir internet durante o build.
+FOODIST_TAG identifica a imagem (nome interno mantido por compatibilidade). Para retornar a uma imagem já construída, use FOODIST_TAG=v1 docker compose up -d --no-build. Para parar, docker compose down.
 
-### Atualização e retorno de versão
+## Verificações
 
-Defina FOODIST_TAG para identificar a versão. Por exemplo, FOODIST_TAG=v1 docker compose up -d --build cria e executa foodist-fe:v1. Antes de atualizar, preserve a imagem anterior e faça backup do arquivo de dados/volume.
+```sh
+pnpm lint
+pnpm build
+pnpm typecheck
+pnpm test
+pnpm test:docker
+```
 
-Para retornar à imagem já construída: FOODIST_TAG=v1 docker compose up -d --no-build. O volume é mantido; mudanças futuras de formato de dados devem acompanhar migração ou backup.
+pnpm test executa verificações do transporte externo, interface e runtime standalone. Os testes iniciam um servidor HTTP isolado com respostas de contrato, exclusivo dos testes; ele não faz parte da aplicação e não acessa sua API ou dados reais. Não equivalem à validação de um backend real.
 
-## Integração futura opcional
+Para os testes de interface:
 
-O contrato do backend está registrado em .ai/07-contrato-backend.md. Para usar uma API disponível futuramente, configure USE_MOCK_DATA=false e API_BASE_URL com o endereço base acessível pelo servidor Next, sem /v1. Não há fallback silencioso para mocks quando a flag é false.
+```sh
+pnpm exec playwright install --with-deps chromium
+```
 
-Dentro de um container, localhost é o próprio container. Use um endereço ou nome de serviço alcançável pelo frontend. O navegador acessa as rotas internas /api; não precisa conhecer a URL do backend.
+pnpm test:docker constrói uma imagem isolada e verifica saúde, usuário, arquivos estáticos e comportamento sem backend. Remove somente os recursos que cria.
 
 ## Organização
 
-Componentes em pastas com index.tsx, types.tsx e parts/ para partes exclusivas. Tailwind e tokens em app/globals.css. Camada de dados em lib/api; calendário em app/_components/features/CalendarView. Checklist e planos por tema na pasta .ai/.
-### Teste do pacote de produção
-
-pnpm test:standalone verifica o runtime standalone e persistência após reinício. pnpm test:docker requer um Docker Engine acessível e Compose v2; constrói a imagem, sobe um projeto isolado, verifica saúde/arquivos estáticos/uid e persistência após recriar o container. O teste limpa apenas seus próprios containers, volume e tag de imagem.
+Componentes em pastas com index.tsx, types.tsx e parts/ para partes exclusivas. Tailwind e tokens em app/globals.css. Camada de dados em lib/api; calendário em app/_components/features/CalendarView.
