@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 
 import { BrandMark } from "../BrandMark";
 import Link from "next/link";
@@ -28,7 +27,7 @@ export function Sidebar() {
   }
 
   return (
-    <motion.aside layout initial={false} className={`flex shrink-0 flex-col border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
+    <aside className={`flex shrink-0 flex-col overflow-x-clip transition-[width] duration-(--duration-normal) ease-standard motion-reduce:transition-none border-b border-border bg-surface md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0 ${collapsed ? "md:w-20" : "md:w-sidebar"}`}>
       <header className={`flex min-h-topbar items-center gap-2 px-4 ${collapsed ? "md:flex-col md:justify-center md:gap-3 md:py-4" : "justify-between"}`}>
         <Link href="/" aria-label="Yummy! — Calendário" onNavigate={() => setMobileOpen(false)} className="flex items-center gap-1 rounded-control">
           <BrandMark className="h-6 w-6 shrink-0 text-foreground" />
@@ -74,6 +73,6 @@ export function Sidebar() {
           <NavItem item={settingsItem} active={isActive(settingsItem.href)} collapsed={collapsed} onNavigate={() => setMobileOpen(false)} />
         </div>
       </nav>
-    </motion.aside>
+    </aside>
   );
 }

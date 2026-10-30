@@ -17,7 +17,7 @@ export function NavItem({ item, active, collapsed, onNavigate }: NavItemProps) {
       } ${collapsed ? "md:justify-center" : ""}`}
     >
       <Icon size={20} weight={active ? "fill" : "regular"} aria-hidden="true" className="shrink-0" />
-      <span className={collapsed ? "md:sr-only" : ""}>{item.label}</span>
+      <span className={`whitespace-nowrap ${collapsed ? "md:sr-only" : ""}`}>{item.label}</span>
     </Link>
   );
 }
