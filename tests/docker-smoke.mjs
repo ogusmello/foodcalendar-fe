@@ -13,6 +13,10 @@ try{
   compose(["config","--quiet"]);
   execFileSync("docker", ["compose", "--project-name", project, "build"], {env, stdio:"inherit"});
   compose(["up","-d","--pull","never","--wait","--wait-timeout","60"]);
+  const container = compose(["ps", "-q", "web"], true).trim();
+  const bindings = JSON.parse(execFileSync("docker", ["inspect", container, "--format", "{{json .HostConfig.PortBindings}}"], {encoding: "utf8"}));
+  assert.ok(bindings["3000/tcp"].length > 0);
+  assert.ok(bindings["3000/tcp"].every(binding => binding.HostIp === "127.0.0.1"), "The application port must only bind to loopback");
   assert.equal(compose(["exec","-T","web","node","-p","process.getuid()"],true).trim(),"1001");
   compose(["exec","-T","web","test","!","-e","/app/.env.local"]);
   const health=await(await fetch(base+"/api/health")).json();assert.equal(health.mode,"api");
