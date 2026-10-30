@@ -5,10 +5,10 @@ import type { DayMealsProps } from "./types";
 
 
 
-export function DayMeals({ plans, date, incomplete }: DayMealsProps) {
+export function DayMeals({ types, plans, date, incomplete }: DayMealsProps) {
   return (
     <div className="mt-4 space-y-4">
-      {mealCategories.map(category => {
+      {mealCategories.filter(category => !types.length || types.includes(category.type)).map(category => {
         const meals = plans.filter(plan => plan.mealType === category.type);
         return (
           <section key={category.type}>

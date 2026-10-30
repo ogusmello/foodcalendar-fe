@@ -36,3 +36,10 @@ DayMeals em CalendarView/parts organiza o painel de detalhes com ícones por tip
 
 ## Cards e ícones nas três visões
 MealCard em CalendarView/parts centraliza o visual de Hoje, Semana e Mês, com variantes detalhada, padrão e compacta. Nome e pessoa usam uma coluna com gap de 2px e line-heights explícitos. Os cards diários mantêm a descrição com espaçamento reduzido. MealTypeIcon compartilha os ícones semânticos entre cabeçalhos, cards, painel do dia e legenda. A visão mensal preserva o nome compacto e o contexto completo no tooltip/modal. Lint, build, tipos e testes Chromium aprovados.
+
+## Navegação por dia e filtros de refeição
+Clicar na data de Mês ou Semana abre a visão diária daquela data, preservando pessoa e filtros. O contador de refeições adicionais da célula mensal também abre o dia.
+
+As antigas tags de legenda são controles de filtro: uma ou mais categorias podem ser selecionadas, e Todos limpa a seleção. O filtro é aplicado aos eventos, totais, grupos e painel de detalhes da visão ativa. mealTypes na URL preserva o contexto ao navegar entre datas, pessoas e visões. Valores desconhecidos são ignorados; o parâmetro singular mealType continua aceito como compatibilidade. A interação usa o router do Next sem recarregar o documento e sem deslocar a página ao filtrar. Estados selecionados expostos por aria-pressed.
+
+Chromium validou seleção simples/múltipla, limpeza, as três visões, preservação de data/pessoa e abertura do dia com o filtro ativo. Lint, build e tipos aprovados.

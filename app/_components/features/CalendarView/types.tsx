@@ -1,3 +1,3 @@
 export interface CalendarViewProps {
-  searchParams: Promise<{ view?: string; date?: string; userId?: string; planId?: string }>;
+  searchParams: Promise<{ mealTypes?: string; mealType?: string; view?: string; date?: string; userId?: string; planId?: string }>;
 }

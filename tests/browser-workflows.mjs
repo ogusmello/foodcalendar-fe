@@ -184,6 +184,36 @@ try{
   await page.getByRole("region",{name:"Calendário semanal, rolável em telas pequenas"}).getByRole("columnheader").getByRole("link").nth(4).click();
   await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("date")==="2026-10-30" && url.searchParams.get("userId")==="2");
   await page.locator('[aria-label="Calendário diário"]').waitFor();
+  for(const view of ["day","week","month"]){
+    await page.goto(base+"/?view="+view+"&date=2026-10-30&userId=2");
+    const filters=page.getByRole("group",{name:"Filtrar tipos de refeição",exact:true});
+    await filters.getByRole("button",{name:"Almoço",exact:true}).click();
+    await filters.getByRole("button",{name:"Almoço",exact:true,pressed:true}).waitFor();
+    let url=new URL(page.url());
+    assert.equal(url.searchParams.get("view"),view);
+    assert.equal(url.searchParams.get("date"),"2026-10-30");
+    assert.equal(url.searchParams.get("userId"),"2");
+    assert.equal(url.searchParams.get("mealTypes"),"LUNCH");
+    if(view==="day")assert.equal(await page.locator('[aria-label="Calendário diário"]').getByRole("heading",{level:3}).count(),1);
+    if(view==="week")assert.equal(await page.getByRole("region",{name:"Calendário semanal, rolável em telas pequenas"}).getByRole("rowheader").count(),1);
+    if(view==="month"){
+      const titles=await page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"}).locator("button[title]").evaluateAll(elements=>elements.map(element=>element.title));
+      assert.ok(titles.length>0 && titles.every(title=>title.startsWith("Almoço ·")));
+    }
+    await filters.getByRole("button",{name:"Jantar",exact:true}).click();
+    await filters.getByRole("button",{name:"Jantar",exact:true,pressed:true}).waitFor();
+    assert.deepEqual(new URL(page.url()).searchParams.get("mealTypes").split(","),["LUNCH","DINNER"]);
+    if(view==="day")assert.equal(await page.locator('[aria-label="Calendário diário"]').getByRole("heading",{level:3}).count(),2);
+    if(view==="week")assert.equal(await page.getByRole("region",{name:"Calendário semanal, rolável em telas pequenas"}).getByRole("rowheader").count(),2);
+    await filters.getByRole("button",{name:"Todos",exact:true}).click();
+    await filters.getByRole("button",{name:"Todos",exact:true,pressed:true}).waitFor();
+    assert.equal(new URL(page.url()).searchParams.has("mealTypes"),false);
+  }
+  await page.getByRole("group",{name:"Filtrar tipos de refeição",exact:true}).getByRole("button",{name:"Almoço",exact:true}).click();
+  await page.getByRole("group",{name:"Filtrar tipos de refeição",exact:true}).getByRole("button",{name:"Almoço",exact:true,pressed:true}).waitFor();
+  await page.getByRole("region",{name:"Calendário mensal, rolável em telas pequenas"}).getByRole("link",{name:/sexta-feira, 30 de outubro/}).click();
+  await page.waitForURL(url=>url.searchParams.get("view")==="day" && url.searchParams.get("mealTypes")==="LUNCH");
+  await page.locator('[aria-label="Calendário diário"]').waitFor();
   assert.deepEqual(errors,[],"No browser exceptions");
   console.log("PASS: browser creation, Ambos, plan editing, search-to-meal modal, meal editing, cloning, profile creation, themes and mobile navigation.");
 }catch(error){ if(page){fs.mkdirSync("test-results",{recursive:true});await page.screenshot({path:"test-results/failure.png",fullPage:true});}throw error;

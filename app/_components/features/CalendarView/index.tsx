@@ -1,10 +1,10 @@
-import { MealTypeIcon } from "../../common/MealTypeIcon";
+import { MealFilters } from "./parts/MealFilters";
 import { AnimatedSurface } from "../../common/AnimatedSurface";
 import { WorkflowTrigger } from "../../common/Workflow";
 import { DayMeals } from "./parts/DayMeals";
 import Link from "next/link";
 import { getApi } from "@/lib/api/server";
-import type { MealPlan, User } from "@/lib/api/types";
+import type { MealPlan, User, MealType } from "@/lib/api/types";
 import { formatDate, getMonthDays, getWeekDays, parseDate, shiftDays, shiftMonth, todayInSaoPaulo } from "@/lib/calendar";
 import { mealCategories } from "@/lib/meals";
 import { DayCell } from "./parts/DayCell";
@@ -23,6 +23,8 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
   const date = typeof params.date === "string" && parseDate(params.date) ? params.date : today;
   const person = typeof params.userId === "string" ? params.userId : null;
   const view = params.view === "day" || params.view === "week" ? params.view : "month";
+  const rawTypes = typeof params.mealTypes === "string" ? params.mealTypes.split(",") : typeof params.mealType === "string" ? [params.mealType] : [];
+  const filterTypes = [...new Set(rawTypes)].filter((type): type is MealType => mealCategories.some(category => category.type === type));
   const days = view === "day" ? [date] : view === "week" ? getWeekDays(date) : getMonthDays(date);
   const targets = users.filter(user => !person || String(user.id) === person);
   const responses = await Promise.allSettled(targets.map(user => getApi<MealPlan[]>(`/meal-plans?userId=${user.id}&startDate=${days[0]}&endDate=${days.at(-1)}`)));
@@ -33,11 +35,12 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
   function href(day: string, userId = person, nextView: string = view) {
     const query = new URLSearchParams({ date: day, view: nextView });
     if (userId) query.set("userId", userId);
+    if (filterTypes.length) query.set("mealTypes", filterTypes.join(","));
     return `/?${query}`;
   }
   function occurrences(day: string) {
     const weekday = weekdays[parseDate(day)!.getDay()];
-    return plans.filter(plan => plan.startDate <= day && plan.endDate >= day && plan.targetDays.includes(weekday))
+    return plans.filter(plan => plan.startDate <= day && plan.endDate >= day && plan.targetDays.includes(weekday) && (!filterTypes.length || filterTypes.includes(plan.mealType)))
       .sort((a, b) => mealCategories.findIndex(item => item.type === a.mealType) - mealCategories.findIndex(item => item.type === b.mealType) || a.user.id - b.user.id);
   }
   const selectedPlans = occurrences(date);
@@ -75,15 +78,15 @@ export async function CalendarView({ searchParams }: CalendarViewProps) {
             <tbody>{weeks.map(week => <tr key={week[0]}>{week.map(day => <DayCell userId={person} key={day} date={day} today={today} selected={day === date} inMonth={day.slice(0, 7) === date.slice(0, 7)} plans={occurrences(day)} href={href(day, person, "day")} incomplete={incomplete} />)}</tr>)}</tbody>
           </table>
         </div>
-        : <Schedule userId={person} days={days} events={Object.fromEntries(days.map(day => [day, occurrences(day)]))} links={Object.fromEntries(days.map(day => [day, href(day, person, "day")]))} today={today} selectedDate={date} incomplete={incomplete} />}
-        <ul aria-label="Legenda dos tipos de refeição" className="flex flex-wrap gap-2 p-4">{mealCategories.map(item => <li key={item.type} className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium ${item.color}`}><MealTypeIcon type={item.type} size={12} />{item.label}</li>)}</ul>
+        : <Schedule types={filterTypes} userId={person} days={days} events={Object.fromEntries(days.map(day => [day, occurrences(day)]))} links={Object.fromEntries(days.map(day => [day, href(day, person, "day")]))} today={today} selectedDate={date} incomplete={incomplete} />}
+        <MealFilters selected={filterTypes} />
       </section>
       {view === "month" && <aside aria-labelledby="selected-day-heading" className="rounded-card border border-border bg-surface p-5 shadow-card">
         <p className="text-xs capitalize text-muted-foreground">{formatDate(date, { weekday: "long" })}</p>
         <h2 id="selected-day-heading" className="mt-1 text-lg font-semibold">{formatDate(date, { day: "numeric", month: "long" })}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{selectedPlans.length} refeições{incomplete ? " · dados parciais" : ""}</p>
-        <DayMeals plans={selectedPlans} date={date} incomplete={incomplete} />
-        <Link href={`/?view=week&date=${date}${person ? `&userId=${encodeURIComponent(person)}` : ""}`} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
+        <DayMeals types={filterTypes} plans={selectedPlans} date={date} incomplete={incomplete} />
+        <Link href={href(date, person, "week")} className="mt-6 inline-block rounded-control text-sm font-medium text-primary">Ver semana →</Link>
       </aside>}
     </AnimatedSurface>
   </div>;

@@ -6,11 +6,12 @@ import { formatDate } from "@/lib/calendar";
 import { mealCategories } from "@/lib/meals";
 import type { ScheduleProps } from "./types";
 
-export function Schedule({ days, events, links, today, userId, selectedDate, incomplete }: ScheduleProps) {
+export function Schedule({ types, days, events, links, today, userId, selectedDate, incomplete }: ScheduleProps) {
+  const categories = mealCategories.filter(category => !types.length || types.includes(category.type));
   if (days.length === 1) {
     const meals = events[days[0]] ?? [];
     return <div aria-label="Calendário diário" className="grid gap-bento p-4 sm:grid-cols-2 xl:grid-cols-3">
-      {mealCategories.map(category => {
+      {categories.map(category => {
         const plans = meals.filter(plan => plan.mealType === category.type);
         return <section key={category.type} className={`rounded-card p-4 ${category.color}`}>
           <h3 className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-wide"><MealTypeIcon type={category.type} size={14} />{category.label}</h3>
@@ -28,7 +29,7 @@ export function Schedule({ days, events, links, today, userId, selectedDate, inc
         <th scope="col" className="sticky left-0 z-10 border-r border-b border-border bg-surface px-3 py-3 text-left text-xs font-medium text-muted-foreground">Refeição</th>
         {days.map(day => <th key={day} scope="col" className={`border-r border-b border-border p-2 text-left last:border-r-0 ${day === selectedDate ? "bg-primary-muted/40" : "bg-background"}`}><Link href={links[day]} aria-current={day === selectedDate ? "date" : undefined} className="block rounded-control"><span className="block text-[10px] font-medium capitalize text-muted-foreground">{formatDate(day, { weekday: "short" })}</span><span className={`mt-1 flex size-7 items-center justify-center rounded-full text-sm ${day === today ? "bg-primary text-primary-foreground" : "text-foreground"}`}>{Number(day.slice(-2))}</span></Link></th>)}
       </tr></thead>
-      <tbody>{mealCategories.map(category => <tr key={category.type}>
+      <tbody>{categories.map(category => <tr key={category.type}>
         <th scope="row" className="sticky left-0 z-10 border-r border-b border-border bg-surface px-2.5 py-3 text-left text-[10px] font-medium text-muted-foreground"><span className="flex items-center gap-1.5 leading-4"><MealTypeIcon type={category.type} size={14} />{category.label}</span></th>
         {days.map(day => {
           const plans = events[day]?.filter(plan => plan.mealType === category.type) ?? [];

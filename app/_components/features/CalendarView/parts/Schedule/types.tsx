@@ -1,6 +1,7 @@
-import type { MealPlan } from "@/lib/api/types";
+import type { MealPlan, MealType } from "@/lib/api/types";
 
 export interface ScheduleProps {
+  types: MealType[];
   days: string[];
   events: Record<string, MealPlan[]>;
   links: Record<string, string>;
